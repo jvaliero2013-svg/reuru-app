@@ -185,7 +185,7 @@
         // ////////////////////////////////////////////////////////////
         // //  CONFIGURACIÓN GLOBAL                                  //
         // ////////////////////////////////////////////////////////////
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzKMfAAuVRjVpIwDkN46RfHYvUtk5CrNZnGXm_0aQuwTJH7Tx99jvgMY37V6uh8oUWb/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
         let bolsaIdActiva = "";
         const html5QrCode = new Html5Qrcode("reader");
 
@@ -370,10 +370,17 @@ if (datos.bolsas > 0) {
                     + `&lat=${pos.coords.latitude}`
                     + `&lon=${pos.coords.longitude}`;
 
-                fetch(url).then(r => r.text()).then(res => {
-                    alert("RESPUESTA:\n" + res);
-                    resetUI();
-                    cargarDatosUsuario(userIdActual);
+fetch(url)
+.then(r => r.text())
+.then(res => {
+    alert("RESPUESTA:\n" + res);
+    resetUI();
+    cargarDatosUsuario(userIdActual);
+})
+.catch(err => {
+    alert("ERROR FETCH: " + err.message);
+    resetUI();
+});
                 });
             }, (err) => { alert("Error: GPS necesario"); resetUI(); });
         }
