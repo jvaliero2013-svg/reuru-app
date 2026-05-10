@@ -104,7 +104,20 @@
 <div style="margin-top: 80px;"></div>
     <div class="card">
         <div class="logo">🌿 REURU</div>
-
+<div id="sec-inicio" class="section">
+    <div class="py-4">
+        <h2 class="fw-bold text-success">¡Bienvenido! 🌿</h2>
+        <p class="text-muted">Elegí una opción para comenzar a reciclar con REURU</p>
+        
+        <button class="btn-main mt-4" onclick="mostrarSeccion('sec-registro')">
+            CREAR CUENTA NUEVA
+        </button>
+        
+        <button class="btn-main mt-3" style="background: #6c757d;" onclick="mostrarSeccion('sec-login')">
+            YA TENGO CUENTA
+        </button>
+    </div>
+</div>
         <!-- ////////////////////////////////////////////////////// -->
         <!-- //  SECCIÓN: REGISTRO DE USUARIO                     // -->
         <!-- ////////////////////////////////////////////////////// -->
@@ -414,19 +427,18 @@
         // //  Se ejecuta apenas carga la página                     //
         // //  Decide si mostrar LOGIN o PERFIL                      //
         // ////////////////////////////////////////////////////////////
-        window.onload = function() {
-            const idGuardado = localStorage.getItem("reuru_user_id");
+window.onload = function() {
+    const idGuardado = localStorage.getItem("reuru_user_id");
 
-            if (idGuardado) {
-                // 👉 Si existe usuario → vamos directo al perfil
-                mostrarSeccion('sec-perfil');
-                cargarDatosUsuario(idGuardado);
-            } else {
-                // 👉 Si NO hay usuario → mostrar login
-                mostrarSeccion('sec-login');
-            }
-        };
-
+    if (idGuardado) {
+        // 👉 Si ya hay sesión iniciada, vamos al perfil
+        mostrarSeccion('sec-perfil');
+        cargarDatosUsuario(idGuardado);
+    } else {
+        // 👉 Si es un usuario nuevo o cerró sesión, mostramos la bienvenida
+        mostrarSeccion('sec-inicio'); 
+    }
+};
 
         // ////////////////////////////////////////////////////////////
         // //  NAVEGACIÓN ENTRE PANTALLAS                            //
