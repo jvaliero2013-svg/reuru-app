@@ -187,7 +187,7 @@
         // ////////////////////////////////////////////////////////////
         const scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
         let bolsaIdActiva = "";
-        let html5QrCode = null;
+        const html5QrCode = null;
 
 
         // ////////////////////////////////////////////////////////////
@@ -398,27 +398,35 @@ fetch(url)
         // //  Igual que el municipal + manda señal ABRIR            //
         // //  a la Raspberry via script                             //
         // ////////////////////////////////////////////////////////////
-        function enviarDatosReciclajeReuru(idContenedor) {
+function enviarDatosReciclaje(idContenedor) {
             document.getElementById("loader").style.display = "block";
             document.getElementById("status").innerText = "Validando GPS...";
 
             navigator.geolocation.getCurrentPosition((pos) => {
                 const userIdActual = localStorage.getItem("reuru_user_id");
-                const url = `${scriptURL}?action=reciclar_reuru`
+                const url = `${scriptURL}?action=reciclar_bolsa`
                     + `&user=${userIdActual}`
                     + `&contenedor=${idContenedor}`
                     + `&bolsa_id=${bolsaIdActiva}`
                     + `&lat=${pos.coords.latitude}`
                     + `&lon=${pos.coords.longitude}`;
 
-                fetch(url).then(r => r.text()).then(res => {
+                fetch(url)
+                .then(r => r.text())
+                .then(res => {
                     alert("RESPUESTA:\n" + res);
                     resetUI();
                     cargarDatosUsuario(userIdActual);
+                })
+                .catch(err => {
+                    alert("ERROR FETCH: " + err.message);
+                    resetUI();
                 });
-            }, (err) => { alert("Error: GPS necesario"); resetUI(); });
+            }, (err) => { 
+                alert("Error: GPS necesario"); 
+                resetUI(); 
+            });
         }
-
 
         // ////////////////////////////////////////////////////////////
         // //  ACTIVAR PACK DE BOLSAS                                //
