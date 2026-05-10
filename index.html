@@ -70,19 +70,27 @@
     </button>
   </div>
 </nav>
-
-<div class="offcanvas offcanvas-end" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
-  <div class="offcanvas-header bg-success text-white">
-    <h5 class="offcanvas-title" id="menuLateralLabel">Menú REURU</h5>
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-  </div>
-  <div class="offcanvas-body">
+<div class="offcanvas-body">
     <ul class="list-group list-group-flush">
-      <li class="list-group-item" onclick="mostrarSeccion('sec-perfil')" data-bs-dismiss="offcanvas">👤 Mi Perfil</li>
-      <li class="list-group-item" onclick="encenderCamara()" data-bs-dismiss="offcanvas">♻️ Reciclar QR</li>
-      <li class="list-group-item text-danger" onclick="cerrarSesion()">🚪 Cerrar Sesión</li>
+        <li class="list-group-item" onclick="mostrarSeccion('sec-perfil')" data-bs-dismiss="offcanvas">
+            👤 Mi Perfil
+        </li>
+
+        <li id="menu-admin" class="list-group-item bg-warning-subtle" style="display:none;" onclick="mostrarSeccion('sec-admin')" data-bs-dismiss="offcanvas">
+            🎁 Entregar Pack (ADMIN)
+        </li>
+
+        <li id="menu-reco-ruta" class="list-group-item bg-info-subtle" style="display:none;" onclick="mostrarSeccion('sec-logistica')" data-bs-dismiss="offcanvas">
+            🚚 Ruta de Recolección
+        </li>
+        <li id="menu-reco-abrir" class="list-group-item bg-info-subtle" style="display:none;" onclick="encenderCamara('RECOLECTOR')" data-bs-dismiss="offcanvas">
+            🔑 Abrir Contenedor
+        </li>
+
+        <li class="list-group-item text-danger" onclick="cerrarSesion()" data-bs-dismiss="offcanvas">
+            🚪 Cerrar Sesión
+        </li>
     </ul>
-  </div>
 </div>
 
 <div style="margin-top: 80px;"></div>
@@ -128,18 +136,159 @@
                 ← Ya tengo cuenta
             </button>
         </div>
-        <!-- // SECCION SCANER // -->
-<div id="sec-escanner" class="section">
-    <div style="position: absolute; top: 20px; width: 100%; color: white; text-align: center;">
-        <h2 id="instruccion-camara" class="fw-bold">ESCANEANDO...</h2>
-        <p>Apunta al código QR</p>
+          <!-- // SECCION ADMINISTRADOR // -->
+        <div id="sec-admin-packs" class="section">
+    <div class="card shadow border-warning p-3">
+        <h3 class="text-warning fw-bold">Gestión de Packs</h3>
+        <button class="btn btn-warning w-100 py-3 mb-4 fw-bold" onclick="encenderCamara('ADMIN')">
+            📷 ESCANEAR USUARIO
+        </button>
+
+        <h5>Últimas Entregas</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="historial-entregas">
+                    </tbody>
+            </table>
+        </div>
     </div>
+</div>
+        <!-- // SECCION IMM // -->
+        <div id="sec-imm" class="section">
+    <div class="card shadow border-dark p-3" style="background: #f1f3f5;">
+        <h3 class="fw-bold text-dark">🏛️ Panel de Control IMM</h3>
+        <p class="text-muted small">Gestión de Residuos Urbanos (Unidad de Limpieza)</p>
+        
+        <div class="row g-2 mb-3 text-center">
+            <div class="col-4">
+                <div class="p-2 bg-white rounded border">
+                    <span class="d-block x-small">Kgs Hoy</span>
+                    <strong id="imm-kgs">450</strong>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2 bg-white rounded border">
+                    <span class="d-block x-small">Viajes</span>
+                    <strong id="imm-viajes">12</strong>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2 bg-white rounded border">
+                    <span class="d-block x-small">Alertas</span>
+                    <strong class="text-danger" id="imm-alertas">3</strong>
+                </div>
+            </div>
+        </div>
 
-    <div id="reader"></div>
+        <div class="table-responsive">
+            <table class="table table-hover table-sm shadow-sm bg-white rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Motocarro</th>
+                        <th>Último Punto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-monitoreo-imm">
+                    <tr>
+                        <td>M-05</td>
+                        <td>Tienda Inglesa Central</td>
+                        <td><span class="badge bg-success">En Ruta</span></td>
+                    </tr>
+                    <tr>
+                        <td>M-12</td>
+                        <td>Disco Curva de Maroñas</td>
+                        <td><span class="badge bg-warning">Lleno</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        <!-- // SECCION ALIADO // -->
+        <div id="sec-aliado" class="section">
+    <div class="card shadow border-primary p-3">
+        <h3 class="text-primary fw-bold">📊 Panel de Sucursal</h3>
+        <p class="text-muted small">Estadísticas en tiempo real para el Aliado</p>
+        
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <div class="p-3 bg-primary-subtle rounded-4 text-center">
+                    <span class="d-block small">Usuarios hoy</span>
+                    <strong class="fs-4" id="stats-usuarios">24</strong>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="p-3 bg-success-subtle rounded-4 text-center">
+                    <span class="d-block small">Bolsas Totales</span>
+                    <strong class="fs-4" id="stats-bolsas">142</strong>
+                </div>
+            </div>
+        </div>
 
-    <button class="btn btn-danger rounded-pill mt-4" onclick="detenerCamara(); mostrarSeccion('sec-perfil');">
-        CANCELAR
-    </button>
+        <div class="list-group list-group-flush small">
+            <div class="list-group-item d-flex justify-content-between">
+                <span>Estado de Contenedores:</span>
+                <span class="badge bg-success">Operativos</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between">
+                <span>Próximo Vaciado Est.:</span>
+                <span class="text-primary fw-bold">Mañana 10:00 AM</span>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- // SECCION SCANER // -->
+#sec-escanner {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); /* Fondo negro pro */
+    z-index: 10000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#reader {
+    width: 85%;
+    max-width: 400px;
+    border: 5px solid #28a745;
+    border-radius: 20px;
+}
+        
+<!-- // SECCION LOGISTICA // -->
+        
+        <div id="sec-logistica" class="section">
+    <div class="card shadow border-info p-3">
+        <h3 class="text-info fw-bold">🚚 Ruta de Recolección</h3>
+        <p class="small text-muted">Prioridad según cantidad de bolsas depositadas</p>
+        
+        <div id="lista-prioridades" class="list-group">
+            <div class="list-group-item d-flex justify-content-between align-items-center border-danger">
+                <div>
+                    <strong>C0021 - Plaza Central</strong><br>
+                    <small>Último vaciado: hace 3 días</small>
+                </div>
+                <span class="badge bg-danger rounded-pill">15 Bolsas</span>
+            </div>
+            
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>C0005 - Calle 10 y 5</strong><br>
+                    <small>Último vaciado: hoy 08:00</small>
+                </div>
+                <span class="badge bg-success rounded-pill">0 Bolsas</span>
+            </div>
+        </div>
+    </div>
 </div>
         <!-- ////////////////////////////////////////////////////// -->
         <!-- //  SECCIÓN: LOGIN                                   // -->
@@ -675,7 +824,27 @@ function enviarDatosReciclaje(idContenedor) {
             document.getElementById("reader").style.display = "none";
             document.getElementById("status").innerText = "";
         }
+            // La Lógica de "Detección de Rol" (JavaScript)
+            function configurarMenuSegunRol(rol) {
+    const opciones = ['menu-admin', 'menu-recolector', 'menu-aliado', 'menu-imm'];
+    opciones.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.style.display = 'none';
+    });
 
+    if (rol === "ADMIN") {
+        document.getElementById('menu-admin').style.display = 'block';
+    } 
+    else if (rol === "RECOLECTOR") {
+        document.getElementById('menu-recolector').style.display = 'block';
+    } 
+    else if (rol === "ALIADO") {
+        document.getElementById('menu-aliado').style.display = 'block';
+    }
+    else if (rol === "IMM") {
+        document.getElementById('menu-imm').style.display = 'block';
+    }
+}
 
         // ////////////////////////////////////////////////////////////
         // //  DETENER CÁMARA                                        //
