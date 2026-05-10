@@ -123,37 +123,45 @@
         <!-- ////////////////////////////////////////////////////// -->
         <!-- //  SECCIÓN: PERFIL DE USUARIO                       // -->
         <!-- ////////////////////////////////////////////////////// -->
-        <div id="sec-perfil" class="section">
-
-            <!-- // NOMBRE DE BIENVENIDA // -->
-            <h3 id="perfil-nombre"></h3>
-
-            <div id="perfil-info" style="display: none;">
-
-                <!-- // STATS DEL USUARIO // -->
-<p>🛍️ Bolsas disponibles: <span id="perfil-bolsas" style="font-weight:bold; color:#28a745;">0</span></p>
-<p>♻️ Reciclajes realizados: <span id="perfil-reciclajes" style="font-weight:bold; color:#28a745;">0</span></p>
-<p>⭐ Puntos: <span id="perfil-puntos" style="font-weight:bold; color:#28a745;">0</span></p>
-                <!-- // MENSAJE DE PUNTOS PARA EL PACK // -->
-
-<p id="msg-pack" style="font-size:14px; color:#555;"></p>
-
-                <!-- // BOTÓN ÚNICO RECICLAR                              // -->
-                <!-- // Detecta C=Municipal / R=REURU automáticamente     // -->
-                <button id="btn-escanear" class="btn-main" 
-                    style="background:#28a745;" 
-                    onclick="encenderCamara()">
-                    ♻️ RECICLAR
-                </button>
-<!-- // CARTEL INFORMATIVO DE LÍMITES // -->
-<div id="cartel-pack" style="display:none; margin-top:15px; padding:12px; 
-    background:#fff3cd; border-radius:15px; font-size:13px; color:#856404;">
-    📦 <strong>COMPRÁ UN PACK Y GANÁS MÁS PUNTOS!</strong>
-</div>
 
                 <!-- // BOTÓN CARGAR PACK, siempre visible // -->
                 <button class="btn-main" 
-                    style="background:#17a2b8;" 
+                    style="background:#17a2b8;" <div id="sec-perfil" class="section">
+    <div class="card shadow p-4 border-success" style="border-width: 2px;">
+        
+        <h3 id="perfil-nombre" class="text-success fw-bold mb-3"></h3>
+
+        <div id="perfil-info" style="display: none;">
+            
+            <div class="bg-light rounded-4 p-3 mb-3 border border-success-subtle">
+                <p class="mb-2">🛍️ <strong>Bolsas:</strong> <span id="perfil-bolsas" class="text-success fs-5">0</span></p>
+                <p class="mb-2">♻️ <strong>Reciclajes:</strong> <span id="perfil-reciclajes" class="text-success fs-5">0</span></p>
+                <p class="mb-0">⭐ <strong>Puntos:</strong> <span id="perfil-puntos" class="text-success fs-5 fw-bold">0</span></p>
+            </div>
+
+            <p id="msg-pack" class="small text-muted mb-3"></p>
+
+            <button id="btn-escanear" class="btn btn-success btn-lg w-100 mb-3 shadow-sm py-3 fw-bold" 
+                    onclick="encenderCamara()">
+                ♻️ RECICLAR
+            </button>
+
+            <button class="btn btn-outline-success w-100 mb-4" onclick="location.reload();">
+                SALIR
+            </button>
+
+            <div id="cartel-pack" class="alert alert-warning border-0 rounded-4 shadow-sm" style="display:none;">
+                📦 <strong>¡COMPRÁ UN PACK Y GANÁS MÁS PUNTOS!</strong>
+            </div>
+
+            <div class="mt-2">
+                <small class="text-muted" style="cursor:pointer; font-size: 11px;" onclick="cerrarSesion()">
+                    Cambiar de usuario (Cerrar Sesión)
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
                     onclick="encenderCamaraPack()">
                     📦 CARGAR PACK
                 </button>
