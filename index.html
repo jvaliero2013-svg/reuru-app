@@ -128,7 +128,19 @@
                 ← Ya tengo cuenta
             </button>
         </div>
+        <!-- // SECCION SCANER // -->
+<div id="sec-escanner" class="section">
+    <div style="position: absolute; top: 20px; width: 100%; color: white; text-align: center;">
+        <h2 id="instruccion-camara" class="fw-bold">ESCANEANDO...</h2>
+        <p>Apunta al código QR</p>
+    </div>
 
+    <div id="reader"></div>
+
+    <button class="btn btn-danger rounded-pill mt-4" onclick="detenerCamara(); mostrarSeccion('sec-perfil');">
+        CANCELAR
+    </button>
+</div>
         <!-- ////////////////////////////////////////////////////// -->
         <!-- //  SECCIÓN: LOGIN                                   // -->
         <!-- ////////////////////////////////////////////////////// -->
