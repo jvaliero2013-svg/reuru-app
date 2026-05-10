@@ -619,12 +619,19 @@ function enviarDatosReciclaje(idContenedor) {
         // //  DETENER CÁMARA                                        //
         // //  Se llama al cambiar de pantalla                       //
         // ////////////////////////////////////////////////////////////
-        function detenerCamara() {
-            if (html5QrCode.isScanning) {
-                html5QrCode.stop().catch(err => console.log("Error al detener:", err));
+
+function detenerCamara() {
+            // Solo intentamos detener si el objeto existe Y está escaneando
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop()
+                    .then(() => {
+                        console.log("Cámara detenida");
+                        document.getElementById("reader").style.display = "none";
+                        document.getElementById("btnScan").style.display = "block";
+                    })
+                    .catch(err => console.log("Error al detener:", err));
             }
         }
-
     </script>
 </body>
 </html>
