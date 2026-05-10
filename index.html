@@ -187,7 +187,7 @@
         // ////////////////////////////////////////////////////////////
         const scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
         let bolsaIdActiva = "";
-        const html5QrCode = null;
+let
 
 
         // ////////////////////////////////////////////////////////////
@@ -360,44 +360,12 @@ if (datos.bolsas > 0) {
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  RECICLAR EN CONTENEDOR MUNICIPAL                      //
-        // //  Valida GPS y registra el reciclaje                    //
-        // ////////////////////////////////////////////////////////////
-        function enviarDatosReciclaje(idContenedor) {
-            document.getElementById("loader").style.display = "block";
-            document.getElementById("status").innerText = "Validando GPS...";
-
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const userIdActual = localStorage.getItem("reuru_user_id");
-                const url = `${scriptURL}?action=reciclar_bolsa`
-                    + `&user=${userIdActual}`
-                    + `&contenedor=${idContenedor}`
-                    + `&bolsa_id=${bolsaIdActiva}`
-                    + `&lat=${pos.coords.latitude}`
-                    + `&lon=${pos.coords.longitude}`;
-
-fetch(url)
-.then(r => r.text())
-.then(res => {
-    alert("RESPUESTA:\n" + res);
-    resetUI();
-    cargarDatosUsuario(userIdActual);
-})
-.catch(err => {
-    alert("ERROR FETCH: " + err.message);
-    resetUI();
-});
-                });
-            }, (err) => { alert("Error: GPS necesario"); resetUI(); });
-        }
+        // ////////////////////////////////
+        // //                           //
+        // //  ENVIAR DATOS RECICLAJE  //
+        // /////////////////////////////
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  RECICLAR EN CONTENEDOR REURU INTELIGENTE              //
-        // //  Igual que el municipal + manda señal ABRIR            //
-        // //  a la Raspberry via script                             //
-        // ////////////////////////////////////////////////////////////
 function enviarDatosReciclaje(idContenedor) {
             document.getElementById("loader").style.display = "block";
             document.getElementById("status").innerText = "Validando GPS...";
@@ -416,18 +384,18 @@ function enviarDatosReciclaje(idContenedor) {
                 .then(res => {
                     alert("RESPUESTA:\n" + res);
                     resetUI();
-                    cargarDatosUsuario(userIdActual);
+                    // Después de reciclar, refrescamos los datos para ver si bajó el contador de bolsas
+                    if(userIdActual) cargarDatosUsuario(userIdActual);
                 })
                 .catch(err => {
-                    alert("ERROR FETCH: " + err.message);
+                    alert("ERROR DE CONEXIÓN: " + err.message);
                     resetUI();
                 });
             }, (err) => { 
-                alert("Error: GPS necesario"); 
+                alert("Error: Para reciclar es necesario activar el GPS"); 
                 resetUI(); 
             });
         }
-
         // ////////////////////////////////////////////////////////////
         // //  ACTIVAR PACK DE BOLSAS                                //
         // //  Manda el ID del pack al script y suma bolsas          //
