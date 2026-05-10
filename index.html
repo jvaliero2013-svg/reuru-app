@@ -4,673 +4,510 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REURU App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-    #sec-escanner { 
-        display: none; 
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        background: rgba(0,0,0,0.9); 
-        z-index: 9999; 
-        color: white;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    #reader { 
-        width: 300px; 
-        margin: auto; 
-    }
-</style>
-    <style>
-        /* //////////////////////////////////////////////////////////// */
-        /* //  ESTILOS VISUALES (COLORES, BOTONES Y DISEÑO)            // */
-        /* //////////////////////////////////////////////////////////// */
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #f0f2f5; margin: 0; padding: 20px; }
-        .card { max-width: 450px; margin: auto; background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .section { display: none; } 
-        .active { display: block !important; }
-        #reader { 
-            width: 100%; 
-            max-width: 300px; 
-            margin: 20px auto; 
-            border-radius: 15px;
-            overflow: hidden;
-            border: 4px solid #28a745;
-        }
-        .btn-main { background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-secondary { background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-size: 14px; cursor: pointer; margin-top: 20px; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; }
-        .loader { display: none; margin: 20px auto; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding-top: 70px; }
+        .card-main { max-width: 480px; margin: 20px auto; background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .logo { font-size: 28px; font-weight: bold; color: #2d5a27; text-align: center; margin-bottom: 15px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .btn-main { background: #28a745; color: white; border: none; padding: 14px 20px; border-radius: 50px; font-size: 17px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-volver { background: none; border: none; color: #28a745; font-size: 15px; cursor: pointer; padding: 10px; display: block; margin: 8px auto; font-weight: bold; }
+        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 15px; }
+        .loader { display: none; margin: 15px auto; border: 5px solid #f3f3f3; border-top: 5px solid #28a745; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .logo { font-size: 32px; font-weight: bold; color: #2d5a27; margin-bottom: 10px; }
+        .stat-box { background: #f8f9fa; border-radius: 15px; padding: 12px; margin: 8px 0; text-align: left; }
+        .stat-box span { font-weight: bold; color: #28a745; font-size: 18px; }
 
-        /* //////////////////////////////////////////////////////////// */
-        /* //  BOTÓN VOLVER CON FLECHA                                // */
-        /* //////////////////////////////////////////////////////////// */
-        .btn-volver {
-            background: none;
-            border: none;
-            color: #28a745;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 10px;
-            display: block;
-            margin: 10px auto;
-            font-weight: bold;
+        /* // ESCANER PANTALLA COMPLETA // */
+        #sec-escanner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 9999;
+            color: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
         }
+        #reader { width: 300px; max-width: 90vw; margin: 20px auto; border-radius: 15px; overflow: hidden; border: 3px solid #28a745; }
     </style>
 </head>
 <body>
+
+    <!-- ============================================================ -->
+    <!-- //  NAVBAR                                                 // -->
+    <!-- ============================================================ -->
     <nav class="navbar navbar-dark bg-success fixed-top shadow">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#" onclick="mostrarSeccion('sec-perfil')">
-      REURU
-    </a>
-    
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </div>
-</nav>
-<div class="offcanvas-body">
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item" onclick="mostrarSeccion('sec-perfil')" data-bs-dismiss="offcanvas">
-            👤 Mi Perfil
-        </li>
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">REURU</span>
+            <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
 
-        <li id="menu-admin" class="list-group-item bg-warning-subtle" style="display:none;" onclick="mostrarSeccion('sec-admin')" data-bs-dismiss="offcanvas">
-            🎁 Entregar Pack (ADMIN)
-        </li>
+    <!-- ============================================================ -->
+    <!-- //  MENU LATERAL                                           // -->
+    <!-- ============================================================ -->
+    <div class="offcanvas offcanvas-end" id="menuLateral">
+        <div class="offcanvas-header bg-success text-white">
+            <h5 class="offcanvas-title">REURU</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" onclick="mostrarSeccion('sec-perfil')" data-bs-dismiss="offcanvas">
+                    Mi Perfil
+                </li>
+                <li id="menu-admin" class="list-group-item list-group-item-action list-group-item-warning" style="display:none;" onclick="mostrarSeccion('sec-admin')" data-bs-dismiss="offcanvas">
+                    Entregar Pack (ADMIN)
+                </li>
+                <li id="menu-recolector" class="list-group-item list-group-item-action list-group-item-info" style="display:none;" onclick="mostrarSeccion('sec-recolector')" data-bs-dismiss="offcanvas">
+                    Ruta de Recoleccion
+                </li>
+                <li id="menu-aliado" class="list-group-item list-group-item-action list-group-item-primary" style="display:none;" onclick="mostrarSeccion('sec-aliado')" data-bs-dismiss="offcanvas">
+                    Dashboard Aliado
+                </li>
+                <li id="menu-imm" class="list-group-item list-group-item-action list-group-item-secondary" style="display:none;" onclick="mostrarSeccion('sec-imm')" data-bs-dismiss="offcanvas">
+                    Panel IMM
+                </li>
+                <li class="list-group-item list-group-item-action text-danger" onclick="cerrarSesion()" data-bs-dismiss="offcanvas">
+                    Cerrar Sesion
+                </li>
+            </ul>
+        </div>
+    </div>
 
-        <li id="menu-reco-ruta" class="list-group-item bg-info-subtle" style="display:none;" onclick="mostrarSeccion('sec-logistica')" data-bs-dismiss="offcanvas">
-            🚚 Ruta de Recolección
-        </li>
-        <li id="menu-reco-abrir" class="list-group-item bg-info-subtle" style="display:none;" onclick="encenderCamara('RECOLECTOR')" data-bs-dismiss="offcanvas">
-            🔑 Abrir Contenedor
-        </li>
-
-        <li class="list-group-item text-danger" onclick="cerrarSesion()" data-bs-dismiss="offcanvas">
-            🚪 Cerrar Sesión
-        </li>
-    </ul>
-</div>
-
-<div style="margin-top: 80px;"></div>
-    <div class="card">
-        <div class="logo">🌿 REURU</div>
-<div id="sec-inicio" class="section">
-    <div class="py-4">
-        <h2 class="fw-bold text-success">¡Bienvenido! 🌿</h2>
-        <p class="text-muted">Elegí una opción para comenzar a reciclar con REURU</p>
-        
-        <button class="btn-main mt-4" onclick="mostrarSeccion('sec-registro')">
-            CREAR CUENTA NUEVA
-        </button>
-        
-        <button class="btn-main mt-3" style="background: #6c757d;" onclick="mostrarSeccion('sec-login')">
-            YA TENGO CUENTA
+    <!-- ============================================================ -->
+    <!-- //  ESCANER PANTALLA COMPLETA                              // -->
+    <!-- ============================================================ -->
+    <div id="sec-escanner">
+        <h4 id="instruccion-camara">ESCANEA EL QR REURU</h4>
+        <div id="reader"></div>
+        <p id="status-camara" style="color:#aaa; font-size:14px;"></p>
+        <button class="btn btn-danger btn-lg mt-3 rounded-pill px-5" onclick="detenerCamara()">
+            Cancelar
         </button>
     </div>
-</div>
-        <!-- ////////////////////////////////////////////////////// -->
-        <!-- //  SECCIÓN: REGISTRO DE USUARIO                     // -->
-        <!-- ////////////////////////////////////////////////////// -->
+
+    <!-- ============================================================ -->
+    <!-- //  CARD PRINCIPAL                                         // -->
+    <!-- ============================================================ -->
+    <div class="card-main">
+        <div class="logo">REURU</div>
+
+        <!-- ======================================================== -->
+        <!-- //  SECCION: INICIO                                    // -->
+        <!-- ======================================================== -->
+        <div id="sec-inicio" class="section">
+            <div class="py-3 text-center">
+                <h4 class="fw-bold text-success">Bienvenido!</h4>
+                <p class="text-muted">Recicla, gana puntos y cuida el planeta</p>
+                <button class="btn-main" onclick="mostrarSeccion('sec-registro')">CREAR CUENTA NUEVA</button>
+                <button class="btn-main mt-2" style="background:#6c757d;" onclick="mostrarSeccion('sec-login')">YA TENGO CUENTA</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- //  SECCION: REGISTRO                                  // -->
+        <!-- ======================================================== -->
         <div id="sec-registro" class="section">
-            <h3>Crear cuenta 🌿</h3>
-            <p style="color:#888; font-size:13px;">
+            <h4 class="text-center fw-bold text-success">Crear cuenta</h4>
+            <p style="color:#888; font-size:13px; text-align:center;">
                 Los campos con <span style="color:red;">*</span> son obligatorios
             </p>
-
-            <!-- // CAMPOS OBLIGATORIOS // -->
-            <input type="text" id="reg-nombre" 
-                placeholder="Nombre completo *"
-                style="border-color:#28a745;">
-
-            <input type="email" id="reg-email" 
-                placeholder="Email *"
-                style="border-color:#28a745;">
-
-            <input type="number" id="reg-pin" 
-                placeholder="PIN de 4 números *"
-                style="border-color:#28a745;"
-                oninput="if(this.value.length > 4) this.value = this.value.slice(0,4)">
-
-            <!-- // CAMPOS OPCIONALES // -->
-            <input type="tel" id="reg-tel" 
-                placeholder="Teléfono (opcional)">
-
-            <input type="text" id="reg-dir" 
-                placeholder="Dirección (opcional)">
-
-            <!-- // BOTONES // -->
-            <button class="btn-main" onclick="ejecutarRegistro()">
-                CREAR CUENTA 🌿
-            </button>
-
-            <button class="btn-volver" onclick="mostrarSeccion('sec-login')">
-                ← Ya tengo cuenta
-            </button>
-        </div>
-          <!-- // SECCION ADMINISTRADOR // -->
-        <div id="sec-admin-packs" class="section">
-    <div class="card shadow border-warning p-3">
-        <h3 class="text-warning fw-bold">Gestión de Packs</h3>
-        <button class="btn btn-warning w-100 py-3 mb-4 fw-bold" onclick="encenderCamara('ADMIN')">
-            📷 ESCANEAR USUARIO
-        </button>
-
-        <h5>Últimas Entregas</h5>
-        <div class="table-responsive">
-            <table class="table table-sm table-striped" style="font-size: 12px;">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Usuario</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="historial-entregas">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-        // seccion scaner html
-        <div id="sec-escanner" style="display: none;">
-    <div class="p-3 text-center w-100">
-        <h4 id="instruccion-camara" class="mb-3">ESCANEÁ EL QR REURU</h4>
-        
-        <div id="reader" class="mx-auto border border-2 border-primary rounded-3 overflow-hidden"></div>
-        
-        <button class="btn btn-danger btn-lg mt-4 w-75 rounded-pill shadow" onclick="detenerCamara()">
-            ❌ Cancelar
-        </button>
-    </div>
-</div>
-        <!-- // SECCION IMM // -->
-        <div id="sec-imm" class="section">
-    <div class="card shadow border-dark p-3" style="background: #f1f3f5;">
-        <h3 class="fw-bold text-dark">🏛️ Panel de Control IMM</h3>
-        <p class="text-muted small">Gestión de Residuos Urbanos (Unidad de Limpieza)</p>
-        
-        <div class="row g-2 mb-3 text-center">
-            <div class="col-4">
-                <div class="p-2 bg-white rounded border">
-                    <span class="d-block x-small">Kgs Hoy</span>
-                    <strong id="imm-kgs">450</strong>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="p-2 bg-white rounded border">
-                    <span class="d-block x-small">Viajes</span>
-                    <strong id="imm-viajes">12</strong>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="p-2 bg-white rounded border">
-                    <span class="d-block x-small">Alertas</span>
-                    <strong class="text-danger" id="imm-alertas">3</strong>
-                </div>
-            </div>
+            <input type="text" id="reg-nombre" placeholder="Nombre completo *" style="border-color:#28a745;">
+            <input type="email" id="reg-email" placeholder="Email *" style="border-color:#28a745;">
+            <input type="number" id="reg-pin" placeholder="PIN de 4 numeros *" style="border-color:#28a745;" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4)">
+            <input type="tel" id="reg-tel" placeholder="Telefono (opcional)">
+            <input type="text" id="reg-dir" placeholder="Direccion (opcional)">
+            <button class="btn-main" onclick="ejecutarRegistro()">CREAR CUENTA</button>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-inicio')">- Volver</button>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-sm shadow-sm bg-white rounded">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Motocarro</th>
-                        <th>Último Punto</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-monitoreo-imm">
-                    <tr>
-                        <td>M-05</td>
-                        <td>Tienda Inglesa Central</td>
-                        <td><span class="badge bg-success">En Ruta</span></td>
-                    </tr>
-                    <tr>
-                        <td>M-12</td>
-                        <td>Disco Curva de Maroñas</td>
-                        <td><span class="badge bg-warning">Lleno</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-        <!-- // SECCION ALIADO // -->
-        <div id="sec-aliado" class="section">
-    <div class="card shadow border-primary p-3">
-        <h3 class="text-primary fw-bold">📊 Panel de Sucursal</h3>
-        <p class="text-muted small">Estadísticas en tiempo real para el Aliado</p>
-        
-        <div class="row g-2 mb-3">
-            <div class="col-6">
-                <div class="p-3 bg-primary-subtle rounded-4 text-center">
-                    <span class="d-block small">Usuarios hoy</span>
-                    <strong class="fs-4" id="stats-usuarios">24</strong>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="p-3 bg-success-subtle rounded-4 text-center">
-                    <span class="d-block small">Bolsas Totales</span>
-                    <strong class="fs-4" id="stats-bolsas">142</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="list-group list-group-flush small">
-            <div class="list-group-item d-flex justify-content-between">
-                <span>Estado de Contenedores:</span>
-                <span class="badge bg-success">Operativos</span>
-            </div>
-            <div class="list-group-item d-flex justify-content-between">
-                <span>Próximo Vaciado Est.:</span>
-                <span class="text-primary fw-bold">Mañana 10:00 AM</span>
-            </div>
-        </div>
-    </div>
-</div>
-    
-        
-<!-- // SECCION LOGISTICA // -->
-        
-        <div id="sec-logistica" class="section">
-    <div class="card shadow border-info p-3">
-        <h3 class="text-info fw-bold">🚚 Ruta de Recolección</h3>
-        <p class="small text-muted">Prioridad según cantidad de bolsas depositadas</p>
-        
-        <div id="lista-prioridades" class="list-group">
-            <div class="list-group-item d-flex justify-content-between align-items-center border-danger">
-                <div>
-                    <strong>C0021 - Plaza Central</strong><br>
-                    <small>Último vaciado: hace 3 días</small>
-                </div>
-                <span class="badge bg-danger rounded-pill">15 Bolsas</span>
-            </div>
-            
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>C0005 - Calle 10 y 5</strong><br>
-                    <small>Último vaciado: hoy 08:00</small>
-                </div>
-                <span class="badge bg-success rounded-pill">0 Bolsas</span>
-            </div>
-        </div>
-    </div>
-</div>
-        <!-- ////////////////////////////////////////////////////// -->
-        <!-- //  SECCIÓN: LOGIN                                   // -->
-        <!-- ////////////////////////////////////////////////////// -->
-
+        <!-- ======================================================== -->
+        <!-- //  SECCION: LOGIN                                     // -->
+        <!-- ======================================================== -->
         <div id="sec-login" class="section">
-            <h3>Ingresar 🌿</h3>
-            <p style="color:#888; font-size:13px;">Ingresá tu email y PIN de 4 números</p>
-
-            <!-- // CAMPOS // -->
+            <h4 class="text-center fw-bold text-success">Ingresar</h4>
+            <p style="color:#888; font-size:13px; text-align:center;">Ingresa tu email y PIN</p>
             <input type="email" id="log-email" placeholder="Tu email *">
-            
-            <input type="number" id="log-pin" 
-                placeholder="PIN de 4 números *" 
-                oninput="if(this.value.length > 4) this.value = this.value.slice(0,4)">
-
-            <!-- // MENSAJE DE INTENTOS // -->
-            <p id="msg-intentos" style="color:red; font-weight:bold; display:none;"></p>
-
-            <!-- // BOTÓN PRINCIPAL // -->
-            <button class="btn-main" onclick="ejecutarLogin()">
-                ENTRAR
-            </button>
-
-            <!-- // BOTÓN OLVIDÉ PIN, siempre visible // -->
-            <button id="btn-recuperar" class="btn-main" 
-                style="background:#ffc107; color:#333;"
-                onclick="recuperarPin()">
-                📧 Olvidé mi PIN
-            </button>
-
-            <!-- // BOTÓN VOLVER // -->
-            <button class="btn-volver" onclick="mostrarSeccion('sec-registro')">
-                ← Crear cuenta nueva
-            </button>
+            <input type="number" id="log-pin" placeholder="PIN de 4 numeros *" oninput="if(this.value.length > 4) this.value = this.value.slice(0,4)">
+            <p id="msg-intentos" style="color:red; font-weight:bold; display:none; text-align:center;"></p>
+            <button class="btn-main" onclick="ejecutarLogin()">ENTRAR</button>
+            <button class="btn-main mt-2" style="background:#ffc107; color:#333;" onclick="recuperarPin()">Olvide mi PIN</button>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-inicio')">- Volver</button>
         </div>
 
-        <!-- ////////////////////////////////////////////////////// -->
-        <!-- //  SECCIÓN: PERFIL DE USUARIO                       // -->
-        <!-- ////////////////////////////////////////////////////// -->
-
-                <!-- // BOTÓN CARGAR PACK, siempre visible // -->
-                <button class="btn-main" 
-                    style="background:#17a2b8;" <div id="sec-perfil" class="section">
-    <div class="card shadow p-4 border-success" style="border-width: 2px;">
-        
-        <h3 id="perfil-nombre" class="text-success fw-bold mb-3"></h3>
-
-        <div id="perfil-info" style="display: none;">
-            
-            <div class="bg-light rounded-4 p-3 mb-3 border border-success-subtle">
-                <p class="mb-2">🛍️ <strong>Bolsas:</strong> <span id="perfil-bolsas" class="text-success fs-5">0</span></p>
-                <p class="mb-2">♻️ <strong>Reciclajes:</strong> <span id="perfil-reciclajes" class="text-success fs-5">0</span></p>
-                <p class="mb-0">⭐ <strong>Puntos:</strong> <span id="perfil-puntos" class="text-success fs-5 fw-bold">0</span></p>
-            </div>
-
-            <p id="msg-pack" class="small text-muted mb-3"></p>
-
-            <button id="btn-escanear" class="btn btn-success btn-lg w-100 mb-3 shadow-sm py-3 fw-bold" 
-                    onclick="encenderCamara()">
-                ♻️ RECICLAR
-            </button>
-
-            <button class="btn btn-outline-success w-100 mb-4" onclick="location.reload();">
-                SALIR
-            </button>
-
-            <div id="cartel-pack" class="alert alert-warning border-0 rounded-4 shadow-sm" style="display:none;">
-                📦 <strong>¡COMPRÁ UN PACK Y GANÁS MÁS PUNTOS!</strong>
-            </div>
-
-            <div class="mt-2">
-                <small class="text-muted" style="cursor:pointer; font-size: 11px;" onclick="cerrarSesion()">
-                    Cambiar de usuario (Cerrar Sesión)
-                </small>
+        <!-- ======================================================== -->
+        <!-- //  SECCION: PERFIL                                    // -->
+        <!-- ======================================================== -->
+        <div id="sec-perfil" class="section">
+            <h4 id="perfil-nombre" class="text-center fw-bold text-success"></h4>
+            <div id="perfil-info" style="display:none;">
+                <div class="stat-box">Bolsas disponibles: <span id="perfil-bolsas">0</span></div>
+                <div class="stat-box">Reciclajes realizados: <span id="perfil-reciclajes">0</span></div>
+                <div class="stat-box">
+                    Puntos: <span id="perfil-puntos">0</span>
+                    <br><small id="msg-pack" style="color:#555;"></small>
+                </div>
+                <button id="btn-escanear" class="btn-main" onclick="encenderCamara('USUARIO')">RECICLAR</button>
+                <div id="cartel-pack" style="display:none; margin-top:12px; padding:12px; background:#fff3cd; border-radius:15px; font-size:13px; color:#856404;">
+                    <strong>COMPRA UN PACK Y GANAS MAS PUNTOS!</strong>
+                </div>
+                <button class="btn-main mt-2" style="background:#17a2b8;" onclick="encenderCamara('PACK')">CARGAR PACK</button>
+                <p style="font-size:12px; color:#aaa; margin-top:15px; text-align:center;">
+                    Gratis: hasta 2 reciclajes diarios | REURU: hasta 4 reciclajes diarios
+                </p>
             </div>
         </div>
-    </div>
-</div>
-                    onclick="encenderCamaraPack()">
-                    📦 CARGAR PACK
-                </button>
 
+        <!-- ======================================================== -->
+        <!-- //  SECCION: ADMIN                                     // -->
+        <!-- ======================================================== -->
+        <div id="sec-admin" class="section">
+            <h4 class="text-center fw-bold text-warning">Panel Admin</h4>
+            <p class="text-muted text-center" style="font-size:13px;">Escanea el QR del usuario para entregar un pack</p>
+            <button class="btn-main" style="background:#ffc107; color:#333;" onclick="encenderCamara('ADMIN')">ESCANEAR USUARIO</button>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+        </div>
 
+        <!-- ======================================================== -->
+        <!-- //  SECCION: RECOLECTOR                                // -->
+        <!-- ======================================================== -->
+        <div id="sec-recolector" class="section">
+            <h4 class="text-center fw-bold text-info">Panel Recolector</h4>
+            <p class="text-muted text-center" style="font-size:13px;">Escanea el contenedor para abrirlo y vaciarlo</p>
+            <button class="btn-main" style="background:#17a2b8;" onclick="encenderCamara('RECOLECTOR')">ABRIR CONTENEDOR</button>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+        </div>
 
-<!-- // INFO LÍMITES DIARIOS // -->
-<p style="font-size:12px; color:#aaa; margin-top:15px;">
-    🆓 Gratis: hasta 2 reciclajes diarios<br>
-    🚀 REURU: hasta 4 reciclajes diarios
-</p>
+        <!-- ======================================================== -->
+        <!-- //  SECCION: ALIADO                                    // -->
+        <!-- ======================================================== -->
+        <div id="sec-aliado" class="section">
+            <h4 class="text-center fw-bold text-primary">Dashboard Aliado</h4>
+            <div class="stat-box">Kgs recuperados: <span style="font-weight:bold; color:#007bff;">-</span></div>
+            <div class="stat-box">Usuarios activos: <span style="font-weight:bold; color:#007bff;">-</span></div>
+            <p style="font-size:12px; color:#aaa; text-align:center; margin-top:10px;">Proximamente mas datos</p>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+        </div>
 
-<!-- // BOTÓN CERRAR SESIÓN // -->
-<button class="btn-secondary" onclick="cerrarSesion()">Cerrar Sesión</button>
-
-                <!-- // LECTOR QR, oculto hasta que se necesite // -->
-                <div id="reader"></div>
-
-            
-
-            </div>
+        <!-- ======================================================== -->
+        <!-- //  SECCION: IMM                                       // -->
+        <!-- ======================================================== -->
+        <div id="sec-imm" class="section">
+            <h4 class="text-center fw-bold">Panel IMM</h4>
+            <div class="stat-box">Contenedores activos: <span style="font-weight:bold;">-</span></div>
+            <div class="stat-box">Reciclajes totales: <span style="font-weight:bold;">-</span></div>
+            <p style="font-size:12px; color:#aaa; text-align:center; margin-top:10px;">Proximamente mapa de calor y alertas</p>
+            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
         </div>
 
         <div id="loader" class="loader"></div>
-        <div id="status" style="margin-top:10px; font-weight:bold; color:#555;"></div>
+        <div id="status" style="margin-top:10px; font-weight:bold; color:#555; text-align:center;"></div>
     </div>
 
     <script>
 
-        // ////////////////////////////////////////////////////////////
-        // //  CONFIGURACIÓN GLOBAL                                  //
-        // ////////////////////////////////////////////////////////////
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
-        let bolsaIdActiva = "";
-        let html5QrCode = null;
+        // ============================================================
+        // //  CONFIGURACION GLOBAL                                  //
+        // ============================================================
+        var scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
+        var bolsaIdActiva = "";
+        var html5QrCode = null;
+        var modoEscaner = "";
 
 
+        // ============================================================
+        // //  INICIO DE LA APP                                      //
+        // //  Si hay usuario en localStorage va al perfil           //
+        // //  Si no hay usuario va a la pantalla de inicio          //
+        // ============================================================
+        window.onload = function() {
+            var idGuardado = localStorage.getItem("reuru_user_id");
+            if (idGuardado) {
+                mostrarSeccion('sec-perfil');
+                cargarDatosUsuario(idGuardado);
+            } else {
+                mostrarSeccion('sec-inicio');
+            }
+        };
 
-        // ////////////////////////////////////////////////////////////
-        // //  INICIO DE LA APP (AUTO LOGIN)                         //
-        // //  Se ejecuta apenas carga la página                     //
-        // //  Decide si mostrar LOGIN o PERFIL                      //
-        // ////////////////////////////////////////////////////////////
-window.onload = function() {
-    const idGuardado = localStorage.getItem("reuru_user_id");
 
-    if (idGuardado) {
-        // 👉 Si ya hay sesión iniciada, vamos al perfil
-        mostrarSeccion('sec-perfil');
-        cargarDatosUsuario(idGuardado);
-    } else {
-        // 👉 Si es un usuario nuevo o cerró sesión, mostramos la bienvenida
-        mostrarSeccion('sec-inicio'); 
-    }
-};
-
-        // ////////////////////////////////////////////////////////////
-        // //  NAVEGACIÓN ENTRE PANTALLAS                            //
-        // //  Muestra una sección y esconde todas las demás         //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  NAVEGACION ENTRE SECCIONES                           //
+        // ============================================================
         function mostrarSeccion(id) {
             var secciones = document.querySelectorAll('.section');
-            secciones.forEach(function(s) {
-                s.style.display = "none";
-                s.classList.remove('active');
-            });
-
-            var seccionActiva = document.getElementById(id);
-            if (seccionActiva) {
-                seccionActiva.style.display = "block";
-                seccionActiva.classList.add('active');
+            for (var i = 0; i < secciones.length; i++) {
+                secciones[i].classList.remove('active');
             }
-
+            var sec = document.getElementById(id);
+            if (sec) sec.classList.add('active');
             document.getElementById("status").innerText = "";
-            detenerCamara();
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  CARGAR DATOS DEL USUARIO                              //
-        // //  Llama al script y rellena el perfil con los datos     //
-        // ////////////////////////////////////////////////////////////
-
+        // ============================================================
+        // //  CARGAR DATOS DEL USUARIO                             //
+        // //  Llama al script, rellena el perfil                   //
+        // //  y activa el menu segun el ROL                        //
+        // ============================================================
         function cargarDatosUsuario(id) {
-            document.getElementById("status").innerText = "Cargando perfil...";
+            document.getElementById("status").innerText = "Cargando...";
 
-            fetch(`${scriptURL}?action=datos_perfil&id=${id}`)
-            .then(r => r.json())
-            .then(datos => {
+            fetch(scriptURL + "?action=datos_perfil&id=" + id)
+            .then(function(r) { return r.json(); })
+            .then(function(datos) {
                 document.getElementById("status").innerText = "";
 
                 if (datos && datos.nombre) {
+                    document.getElementById("perfil-nombre").innerText = "Hola, " + datos.nombre;
+                    document.getElementById("perfil-puntos").innerText = datos.puntos;
+                    document.getElementById("perfil-bolsas").innerText = datos.bolsas;
+                    document.getElementById("perfil-reciclajes").innerText = datos.reciclajes;
+                    document.getElementById("perfil-info").style.display = "block";
 
-                  document.getElementById("perfil-nombre").innerText = "Hola, " + datos.nombre;
-document.getElementById("perfil-puntos").innerText = datos.puntos;
-document.getElementById("perfil-bolsas").innerText = datos.bolsas;
-document.getElementById("perfil-reciclajes").innerText = datos.reciclajes;
-document.getElementById("perfil-info").style.display = "block";
+                    // // Activar menu segun ROL //
+                    var rol = (datos.rol || "USUARIO").toUpperCase();
+                    if (rol === "ADMIN")      document.getElementById("menu-admin").style.display = "block";
+                    if (rol === "RECOLECTOR") document.getElementById("menu-recolector").style.display = "block";
+                    if (rol === "ALIADO")     document.getElementById("menu-aliado").style.display = "block";
+                    if (rol === "IMM")        document.getElementById("menu-imm").style.display = "block";
 
-// // MENSAJE DE PUNTOS PARA EL PACK //
-var PUNTOS_PACK = 200;
-var puntosActuales = Number(datos.puntos) || 0;
-var msgPack = document.getElementById("msg-pack");
+                    // // Mensaje puntos para el pack //
+                    var PUNTOS_PACK = 200;
+                    var puntosActuales = Number(datos.puntos) || 0;
+                    var msgPack = document.getElementById("msg-pack");
+                    if (puntosActuales >= PUNTOS_PACK) {
+                        msgPack.innerHTML = "<strong style='color:#28a745;'>YA PODES CANJEAR UN PACK REURU!</strong>";
+                    } else {
+                        msgPack.innerHTML = "Te faltan <strong>" + (PUNTOS_PACK - puntosActuales) + " puntos</strong> para canjear un pack";
+                    }
 
-if (puntosActuales >= PUNTOS_PACK) {
-    // ✅ Ya puede canjear
-    msgPack.innerHTML = "🎉 <strong>¡YA PODÉS CANJEAR UN PACK REURU!</strong>";
-    msgPack.style.color = "#28a745";
-} else {
-    // ⏳ Le faltan puntos
-    var faltantes = PUNTOS_PACK - puntosActuales;
-    msgPack.innerHTML = "Te faltan <strong>" + faltantes + " puntos</strong> para canjear un pack REURU 🎯";
-    msgPack.style.color = "#555";
-}
+                    // // Boton reciclar segun bolsas disponibles //
+                    var btnEscanear = document.getElementById("btn-escanear");
+                    var cartelPack  = document.getElementById("cartel-pack");
+                    if (datos.bolsas > 0) {
+                        cartelPack.style.display = "none";
+                        btnEscanear.style.background = "#28a745";
+                        btnEscanear.disabled = false;
+                        btnEscanear.innerText = "RECICLAR +10";
+                    } else {
+                        cartelPack.style.display = "block";
+                        btnEscanear.style.background = "#17a2b8";
+                        btnEscanear.disabled = false;
+                        btnEscanear.innerText = "RECICLAR GRATIS +4";
+                    }
 
-
-var btnEscanear = document.getElementById("btn-escanear");
-var cartelPack = document.getElementById("cartel-pack");
-if (datos.bolsas > 0) {
-    cartelPack.style.display = "none";
-    btnEscanear.style.background = "#28a745";
-    btnEscanear.disabled = false;
-    btnEscanear.innerText = "♻️ RECICLAR +10";
-} else {
-    cartelPack.style.display = "block";
-    btnEscanear.style.background = "#17a2b8";
-    btnEscanear.disabled = false;
-    btnEscanear.innerText = "♻️ RECICLAR GRATIS +4";
-}                    // // Guardamos la bolsa activa para usar al reciclar //
+                    // // Guardamos la bolsa activa //
                     if (datos.proxima_bolsa) {
                         bolsaIdActiva = datos.proxima_bolsa;
-                        console.log("Bolsa lista:", bolsaIdActiva);
                     }
 
                 } else {
                     document.getElementById("perfil-nombre").innerText = "Error cargando perfil";
                 }
             })
-            .catch(err => {
-                console.log(err);
-                document.getElementById("status").innerText = "Error conexión";
+            .catch(function(err) {
+                document.getElementById("status").innerText = "Error de conexion";
             });
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  CÁMARA PRINCIPAL                                      //
-        // //  Detecta automáticamente el tipo de QR:               //
-        // //  C = Contenedor Municipal                              //
-        // //  R = Contenedor REURU Inteligente                      //
-        // //  P = Pack de bolsas                                    //
-        // ////////////////////////////////////////////////////////////
-        function encenderCamara() {
- // // Inicializamos el lector la primera vez que se necesita //
-html5QrCode.start({ facingMode: "environment" }, config, (idQR) => {
-    let lectura = idQR.trim().toUpperCase();
-    
-    // Si lee un CONTENEDOR (Empieza con C)
-    if (lectura.startsWith("C")) {
-        detenerCamara();
-        enviarDatosReciclaje(lectura);
-    } 
-    // Si lee un PACK (Empieza con P)
-    else if (lectura.startsWith("P")) {
-        detenerCamara();
-        // Preguntamos al usuario si quiere activar el pack
-        if(confirm("Has escaneado un Pack de bolsas. ¿Quieres activarlo ahora?")) {
-            enviarActivacionPack(lectura);
-        } else {
-            resetUI();
-            mostrarSeccion('sec-perfil');
+        // ============================================================
+        // //  ENCENDER CAMARA                                       //
+        // //  Recibe el modo: USUARIO / PACK / ADMIN / RECOLECTOR   //
+        // //  Muestra la camara en pantalla completa               //
+        // ============================================================
+        function encenderCamara(modo) {
+            modoEscaner = modo;
+
+            var instrucciones = {
+                "USUARIO":    "Escanea el QR del contenedor",
+                "PACK":       "Escanea el QR del Pack de bolsas",
+                "ADMIN":      "Escanea el QR del usuario",
+                "RECOLECTOR": "Escanea el QR del contenedor a vaciar"
+            };
+            document.getElementById("instruccion-camara").innerText = instrucciones[modo] || "Escanea el QR";
+            document.getElementById("status-camara").innerText = "Buscando QR...";
+            document.getElementById("sec-escanner").style.display = "flex";
+
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+
+            var config = { fps: 20, qrbox: { width: 260, height: 260 }, aspectRatio: 1.0 };
+
+            html5QrCode.start({ facingMode: "environment" }, config, function(idQR) {
+                var lectura = idQR.trim().toUpperCase();
+                html5QrCode.stop().then(function() {
+                    document.getElementById("sec-escanner").style.display = "none";
+                    procesarQR(lectura, modoEscaner);
+                });
+            }).catch(function(err) { console.error(err); });
         }
-    } 
-    // Si no es ninguno de los dos
-    else {
-        alert("QR no reconocido. Asegúrate de escanear un Contenedor o un Pack REURU.");
-    }
-});
 
-        // ////////////////////////////////////////////////////////////
-        // //  CÁMARA PARA PACKS                                     //
-        // //  Solo acepta QR que empiece con P                      //
-        // ////////////////////////////////////////////////////////////
-        function encenderCamaraPack() {
- if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-    }
-            document.getElementById("reader").style.display = "block";
-            document.getElementById("status").innerText = "Buscando QR de Pack...";
-            const config = { fps: 20, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 };
 
-            html5QrCode.start({ facingMode: "environment" }, config, (idQR) => {
-                let lectura = idQR.trim().toUpperCase();
-
-                if (lectura.startsWith("P")) {
-                    html5QrCode.stop().then(() => { enviarActivacionPack(lectura); });
+        // ============================================================
+        // //  PROCESAR QR SEGUN MODO Y PREFIJO                     //
+        // //  C = Contenedor Municipal                             //
+        // //  R = Contenedor REURU                                 //
+        // //  P = Pack de bolsas                                   //
+        // //  U = Usuario (para ADMIN)                             //
+        // ============================================================
+        function procesarQR(lectura, modo) {
+            if (modo === "USUARIO") {
+                if (lectura.startsWith("C")) {
+                    enviarDatosReciclaje(lectura);
+                } else if (lectura.startsWith("R")) {
+                    enviarDatosReciclajeReuru(lectura);
+                } else if (lectura.startsWith("P")) {
+                    if (confirm("Ese es un QR de Pack. Deseas activarlo?")) {
+                        enviarActivacionPack(lectura);
+                    }
                 } else {
-                    document.getElementById("status").innerText = "⚠️ Ese QR no es un Pack, intentá de nuevo";
+                    alert("QR no reconocido");
                 }
-            }).catch(err => { console.error(err); });
+            } else if (modo === "PACK") {
+                if (lectura.startsWith("P")) {
+                    enviarActivacionPack(lectura);
+                } else {
+                    alert("Ese QR no es un Pack. Intenta de nuevo.");
+                }
+            } else if (modo === "ADMIN") {
+                if (lectura.startsWith("U")) {
+                    alert("Usuario escaneado: " + lectura + "\nFuncion proximamente");
+                } else {
+                    alert("Escanea el QR del usuario, no del contenedor");
+                }
+            } else if (modo === "RECOLECTOR") {
+                if (lectura.startsWith("C") || lectura.startsWith("R")) {
+                    alert("Contenedor: " + lectura + "\nFuncion proximamente");
+                } else {
+                    alert("QR de contenedor no reconocido");
+                }
+            }
         }
 
 
-        // ////////////////////////////////
-        // //                           //
-        // //  ENVIAR DATOS RECICLAJE  //
-        // /////////////////////////////
+        // ============================================================
+        // //  RECICLAR EN CONTENEDOR MUNICIPAL                     //
+        // ============================================================
+        function enviarDatosReciclaje(idContenedor) {
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("status").innerText = "Validando GPS...";
 
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    var userIdActual = localStorage.getItem("reuru_user_id");
+                    var url = scriptURL
+                        + "?action=reciclar_bolsa"
+                        + "&user=" + userIdActual
+                        + "&contenedor=" + idContenedor
+                        + "&bolsa_id=" + bolsaIdActiva
+                        + "&lat=" + pos.coords.latitude
+                        + "&lon=" + pos.coords.longitude;
 
-function enviarDatosReciclaje(idContenedor) {
-
-    document.getElementById("loader").style.display = "block";
-    document.getElementById("status").innerText = "Validando GPS...";
-
-    navigator.geolocation.getCurrentPosition(
-
-        (pos) => {
-
-            const userIdActual = localStorage.getItem("reuru_user_id");
-
-            const url = `${scriptURL}?action=reciclar_bolsa`
-                + `&user=${userIdActual}`
-                + `&contenedor=${idContenedor}`
-                + `&bolsa_id=${bolsaIdActiva}`
-                + `&lat=${pos.coords.latitude}`
-                + `&lon=${pos.coords.longitude}`;
-
-            fetch(url)
-
-            .then(r => r.text())
-
-            .then(res => {
-
-                alert("RESPUESTA:\n" + res);
-
-                resetUI();
-
-                // Refrescamos perfil
-                if (userIdActual) {
-                    cargarDatosUsuario(userIdActual);
+                    fetch(url)
+                    .then(function(r) { return r.text(); })
+                    .then(function(res) {
+                        alert(res);
+                        resetUI();
+                        cargarDatosUsuario(userIdActual);
+                    })
+                    .catch(function(err) {
+                        alert("Error de conexion: " + err.message);
+                        resetUI();
+                    });
+                },
+                function(err) {
+                    alert("Error GPS: " + err.message);
+                    resetUI();
                 }
-
-            })
-
-            .catch(err => {
-
-                alert("ERROR DE CONEXIÓN: " + err.message);
-
-                resetUI();
-
-            });
-
-        },
-
-        (err) => {
-
-            alert("Error: Para reciclar es necesario activar el GPS");
-
-            resetUI();
-
+            );
         }
 
-    );
 
-}        // ////////////////////////////////////////////////////////////
-        // //  ACTIVAR PACK DE BOLSAS                                //
-        // //  Manda el ID del pack al script y suma bolsas          //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  RECICLAR EN CONTENEDOR REURU INTELIGENTE             //
+        // //  Igual que el municipal + manda senal ABRIR           //
+        // ============================================================
+        function enviarDatosReciclajeReuru(idContenedor) {
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("status").innerText = "Validando GPS...";
+
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    var userIdActual = localStorage.getItem("reuru_user_id");
+                    var url = scriptURL
+                        + "?action=reciclar_reuru"
+                        + "&user=" + userIdActual
+                        + "&contenedor=" + idContenedor
+                        + "&bolsa_id=" + bolsaIdActiva
+                        + "&lat=" + pos.coords.latitude
+                        + "&lon=" + pos.coords.longitude;
+
+                    fetch(url)
+                    .then(function(r) { return r.text(); })
+                    .then(function(res) {
+                        alert(res);
+                        resetUI();
+                        cargarDatosUsuario(userIdActual);
+                    })
+                    .catch(function(err) {
+                        alert("Error de conexion: " + err.message);
+                        resetUI();
+                    });
+                },
+                function(err) {
+                    alert("Error GPS: " + err.message);
+                    resetUI();
+                }
+            );
+        }
+
+
+        // ============================================================
+        // //  ACTIVAR PACK DE BOLSAS                               //
+        // ============================================================
         function enviarActivacionPack(idPack) {
             document.getElementById("loader").style.display = "block";
             document.getElementById("status").innerText = "Activando pack...";
 
-            const userIdActual = localStorage.getItem("reuru_user_id");
-            const url = `${scriptURL}?action=activar_pack&user=${userIdActual}&id_pack=${idPack}`;
+            var userIdActual = localStorage.getItem("reuru_user_id");
+            var url = scriptURL
+                + "?action=activar_pack"
+                + "&user=" + userIdActual
+                + "&id_pack=" + idPack;
 
-            fetch(url).then(r => r.text()).then(res => {
-                alert("RESPUESTA:\n" + res);
+            fetch(url)
+            .then(function(r) { return r.text(); })
+            .then(function(res) {
+                alert(res);
                 resetUI();
                 cargarDatosUsuario(userIdActual);
+            })
+            .catch(function(err) {
+                alert("Error: " + err.message);
+                resetUI();
             });
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  REGISTRO DE USUARIO NUEVO                             //
-        // //  Valida campos y manda los datos al script             //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  REGISTRO DE USUARIO NUEVO                            //
+        // ============================================================
         function ejecutarRegistro() {
             var nom = document.getElementById("reg-nombre").value.trim();
             var em  = document.getElementById("reg-email").value.trim();
@@ -678,22 +515,24 @@ function enviarDatosReciclaje(idContenedor) {
             var tel = document.getElementById("reg-tel").value.trim();
             var dir = document.getElementById("reg-dir").value.trim();
 
-            if (!nom) return alert("⚠️ El nombre es obligatorio");
-            if (!em)  return alert("⚠️ El email es obligatorio");
-            if (!pin || pin.length !== 4) return alert("⚠️ El PIN debe tener exactamente 4 números");
+            if (!nom) return alert("El nombre es obligatorio");
+            if (!em)  return alert("El email es obligatorio");
+            if (!pin || pin.length !== 4) return alert("El PIN debe tener exactamente 4 numeros");
 
             document.getElementById("loader").style.display = "block";
 
-            var url = `${scriptURL}?action=alta_usuario`
-                + `&nombre=${encodeURIComponent(nom)}`
-                + `&email=${encodeURIComponent(em)}`
-                + `&pin=${encodeURIComponent(pin)}`
-                + `&tel=${encodeURIComponent(tel)}`
-                + `&dir=${encodeURIComponent(dir)}`;
+            var url = scriptURL
+                + "?action=alta_usuario"
+                + "&nombre=" + encodeURIComponent(nom)
+                + "&email="  + encodeURIComponent(em)
+                + "&pin="    + encodeURIComponent(pin)
+                + "&tel="    + encodeURIComponent(tel)
+                + "&dir="    + encodeURIComponent(dir);
 
-            fetch(url).then(r => r.text()).then(data => {
+            fetch(url)
+            .then(function(r) { return r.text(); })
+            .then(function(data) {
                 document.getElementById("loader").style.display = "none";
-
                 if (data.startsWith("OK:")) {
                     var userId = data.split(":")[1];
                     localStorage.setItem("reuru_user_id", userId);
@@ -707,13 +546,11 @@ function enviarDatosReciclaje(idContenedor) {
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  LOGIN CON EMAIL Y PIN                                 //
-        // //  Controla intentos fallidos y bloqueo de 2 minutos    //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  LOGIN CON EMAIL Y PIN                                //
+        // //  Controla intentos fallidos y bloqueo 2 minutos      //
+        // ============================================================
         function ejecutarLogin() {
-
-            // // Verificamos si hay bloqueo activo por intentos //
             var bloqueoHasta = localStorage.getItem("bloqueo_hasta");
             if (bloqueoHasta && Date.now() < parseInt(bloqueoHasta)) {
                 iniciarContador(parseInt(bloqueoHasta));
@@ -723,19 +560,18 @@ function enviarDatosReciclaje(idContenedor) {
             var em  = document.getElementById("log-email").value.trim();
             var pin = document.getElementById("log-pin").value.trim();
 
-            if (!em)  return alert("⚠️ Ingresá tu email");
-            if (!pin) return alert("⚠️ Ingresá tu PIN");
+            if (!em)  return alert("Ingresa tu email");
+            if (!pin) return alert("Ingresa tu PIN");
 
             var intentos = parseInt(localStorage.getItem("intentos_fallidos")) || 0;
-
             document.getElementById("loader").style.display = "block";
 
-            fetch(`${scriptURL}?action=login_usuario&email=${encodeURIComponent(em)}&pin=${encodeURIComponent(pin)}`)
-            .then(r => r.text()).then(data => {
+            fetch(scriptURL + "?action=login_usuario&email=" + encodeURIComponent(em) + "&pin=" + encodeURIComponent(pin))
+            .then(function(r) { return r.text(); })
+            .then(function(data) {
                 document.getElementById("loader").style.display = "none";
 
                 if (data.startsWith("OK:")) {
-                    // ✅ Login exitoso
                     localStorage.removeItem("intentos_fallidos");
                     localStorage.removeItem("bloqueo_hasta");
                     var userId = data.split(":")[1];
@@ -744,24 +580,18 @@ function enviarDatosReciclaje(idContenedor) {
                     cargarDatosUsuario(userId);
 
                 } else if (data === "PIN_INCORRECTO") {
-                    // ❌ PIN incorrecto, sumamos intento
                     intentos++;
                     localStorage.setItem("intentos_fallidos", intentos);
-
                     var msgEl = document.getElementById("msg-intentos");
                     msgEl.style.display = "block";
-
                     if (intentos < 4) {
-                        var restantes = 4 - intentos;
-                        msgEl.innerText = "❌ PIN incorrecto. Te quedan " + restantes + " intentos.";
+                        msgEl.innerText = "PIN incorrecto. Te quedan " + (4 - intentos) + " intentos.";
                     } else {
-                        // ⏳ Se acabaron los intentos, bloqueamos 2 minutos
                         var desbloqueo = Date.now() + (2 * 60 * 1000);
                         localStorage.setItem("bloqueo_hasta", desbloqueo);
                         localStorage.setItem("intentos_fallidos", 0);
                         iniciarContador(desbloqueo);
                     }
-
                 } else {
                     alert(data);
                 }
@@ -769,25 +599,24 @@ function enviarDatosReciclaje(idContenedor) {
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  RECUPERAR PIN POR EMAIL                               //
-        // //  El script busca el PIN y lo manda al mail del usuario //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  RECUPERAR PIN POR EMAIL                              //
+        // ============================================================
         function recuperarPin() {
             var em = document.getElementById("log-email").value.trim();
-            if (!em) return alert("⚠️ Primero ingresá tu email arriba");
+            if (!em) return alert("Primero ingresa tu email arriba");
 
             document.getElementById("loader").style.display = "block";
 
-            fetch(`${scriptURL}?action=recuperar_pin&email=${encodeURIComponent(em)}`)
-            .then(r => r.text()).then(data => {
+            fetch(scriptURL + "?action=recuperar_pin&email=" + encodeURIComponent(em))
+            .then(function(r) { return r.text(); })
+            .then(function(data) {
                 document.getElementById("loader").style.display = "none";
-
                 if (data.startsWith("OK:")) {
                     localStorage.removeItem("intentos_fallidos");
                     localStorage.removeItem("bloqueo_hasta");
                     document.getElementById("msg-intentos").style.display = "none";
-                    alert("📧 Te enviamos tu PIN al email. Revisá tu casilla!");
+                    alert("Te enviamos tu PIN al email. Revisa tu casilla!");
                 } else {
                     alert("Error: " + data);
                 }
@@ -795,88 +624,55 @@ function enviarDatosReciclaje(idContenedor) {
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  CONTADOR REGRESIVO DE 2 MINUTOS                      //
-        // //  Se activa cuando el usuario falla 4 veces el PIN     //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  CONTADOR REGRESIVO 2 MINUTOS                         //
+        // ============================================================
         function iniciarContador(hasta) {
             var msgEl = document.getElementById("msg-intentos");
             msgEl.style.display = "block";
-
             var intervalo = setInterval(function() {
                 var restanteMs = hasta - Date.now();
-
                 if (restanteMs <= 0) {
                     clearInterval(intervalo);
                     localStorage.removeItem("bloqueo_hasta");
-                    msgEl.innerText = "✅ Ya podés intentar de nuevo.";
+                    msgEl.innerText = "Ya podes intentar de nuevo.";
                 } else {
-                    var minutos  = Math.floor(restanteMs / 60000);
-                    var segundos = Math.floor((restanteMs % 60000) / 1000);
-                    msgEl.innerText = "⏳ Esperá " + minutos + ":" 
-                        + (segundos < 10 ? "0" : "") + segundos 
-                        + " para intentar de nuevo.";
+                    var min = Math.floor(restanteMs / 60000);
+                    var seg = Math.floor((restanteMs % 60000) / 1000);
+                    msgEl.innerText = "Espera " + min + ":" + (seg < 10 ? "0" : "") + seg + " para intentar.";
                 }
             }, 1000);
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  CERRAR SESIÓN                                         //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  CERRAR SESION                                        //
+        // ============================================================
         function cerrarSesion() {
             localStorage.removeItem("reuru_user_id");
             location.reload();
         }
 
 
-        // ////////////////////////////////////////////////////////////
-        // //  RESET DE LA UI                                        //
-        // //  Limpia loader, lector y mensajes                      //
-        // ////////////////////////////////////////////////////////////
+        // ============================================================
+        // //  RESET DE LA UI                                       //
+        // ============================================================
         function resetUI() {
             document.getElementById("loader").style.display = "none";
-            document.getElementById("reader").style.display = "none";
             document.getElementById("status").innerText = "";
         }
-            // La Lógica de "Detección de Rol" (JavaScript)
-            function configurarMenuSegunRol(rol) {
-    const opciones = ['menu-admin', 'menu-recolector', 'menu-aliado', 'menu-imm'];
-    opciones.forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.style.display = 'none';
-    });
 
-    if (rol === "ADMIN") {
-        document.getElementById('menu-admin').style.display = 'block';
-    } 
-    else if (rol === "RECOLECTOR") {
-        document.getElementById('menu-recolector').style.display = 'block';
-    } 
-    else if (rol === "ALIADO") {
-        document.getElementById('menu-aliado').style.display = 'block';
-    }
-    else if (rol === "IMM") {
-        document.getElementById('menu-imm').style.display = 'block';
-    }
-}
 
-        // ////////////////////////////////////////////////////////////
-        // //  DETENER CÁMARA                                        //
-        // //  Se llama al cambiar de pantalla                       //
-        // ////////////////////////////////////////////////////////////
-
-function detenerCamara() {
-            // Solo intentamos detener si la variable NO es null Y si realmente está escaneando
+        // ============================================================
+        // //  DETENER CAMARA                                       //
+        // ============================================================
+        function detenerCamara() {
             if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop()
-                    .then(() => {
-                        console.log("Cámara detenida con éxito");
-                    })
-                    .catch(err => console.log("Error al detener cámara:", err));
+                html5QrCode.stop().catch(function(err) { console.log(err); });
             }
+            document.getElementById("sec-escanner").style.display = "none";
         }
+
     </script>
 </body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>
