@@ -621,15 +621,13 @@ function enviarDatosReciclaje(idContenedor) {
         // ////////////////////////////////////////////////////////////
 
 function detenerCamara() {
-            // Solo intentamos detener si el objeto existe Y está escaneando
+            // Solo intentamos detener si la variable NO es null Y si realmente está escaneando
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop()
                     .then(() => {
-                        console.log("Cámara detenida");
-                        document.getElementById("reader").style.display = "none";
-                        document.getElementById("btnScan").style.display = "block";
+                        console.log("Cámara detenida con éxito");
                     })
-                    .catch(err => console.log("Error al detener:", err));
+                    .catch(err => console.log("Error al detener cámara:", err));
             }
         }
     </script>
