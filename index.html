@@ -185,9 +185,9 @@
         // ////////////////////////////////////////////////////////////
         // //  CONFIGURACIÓN GLOBAL                                  //
         // ////////////////////////////////////////////////////////////
-        const scriptURL = "https://script.google.com/macros/s/AKfycbw2NyETKNZBBh1y-MA1NIF04pGV-qVVQreeW-H1YWq-r2oBca_ZebjqVkRVwqtuJuKP/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxP_fcprRDNf9Fkn35DFpPPVwqFe1axqMotvNFjFV7z6WkCxu79nf3lZJXx4Ng0SHAz/exec";
         let bolsaIdActiva = "";
-        const html5QrCode = new Html5Qrcode("reader");
+        const html5QrCode = null;
 
 
         // ////////////////////////////////////////////////////////////
@@ -306,6 +306,10 @@ if (datos.bolsas > 0) {
         // //  P = Pack de bolsas                                    //
         // ////////////////////////////////////////////////////////////
         function encenderCamara() {
+ // // Inicializamos el lector la primera vez que se necesita //
+    if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("reader");
+    }
             document.getElementById("reader").style.display = "block";
             document.getElementById("status").innerText = "Buscando QR...";
             const config = { fps: 20, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 };
@@ -337,6 +341,9 @@ if (datos.bolsas > 0) {
         // //  Solo acepta QR que empiece con P                      //
         // ////////////////////////////////////////////////////////////
         function encenderCamaraPack() {
+ if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("reader");
+    }
             document.getElementById("reader").style.display = "block";
             document.getElementById("status").innerText = "Buscando QR de Pack...";
             const config = { fps: 20, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 };
