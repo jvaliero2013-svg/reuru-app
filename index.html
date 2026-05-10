@@ -374,34 +374,30 @@ if (datos.bolsas > 0) {
         // ////////////////////////////////////////////////////////////
         function encenderCamara() {
  // // Inicializamos el lector la primera vez que se necesita //
-    if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-    }
-            document.getElementById("reader").style.display = "block";
-            document.getElementById("status").innerText = "Buscando QR...";
-            const config = { fps: 20, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 };
-
-            html5QrCode.start({ facingMode: "environment" }, config, (idQR) => {
-                let lectura = idQR.trim().toUpperCase();
-
-                if (lectura.startsWith("C")) {
-                    // // C = Contenedor Municipal → GPS + reciclaje //
-                    html5QrCode.stop().then(() => { enviarDatosReciclaje(lectura); });
-                }
-                else if (lectura.startsWith("R")) {
-                    // // R = Contenedor REURU → GPS + reciclaje + señal ABRIR //
-                    html5QrCode.stop().then(() => { enviarDatosReciclajeReuru(lectura); });
-                }
-                else if (lectura.startsWith("P")) {
-                    // // P = Pack → activar bolsas //
-                    html5QrCode.stop().then(() => { enviarActivacionPack(lectura); });
-                }
-                else {
-                    document.getElementById("status").innerText = "⚠️ QR no reconocido, intentá de nuevo";
-                }
-            }).catch(err => { console.error(err); });
+html5QrCode.start({ facingMode: "environment" }, config, (idQR) => {
+    let lectura = idQR.trim().toUpperCase();
+    
+    // Si lee un CONTENEDOR (Empieza con C)
+    if (lectura.startsWith("C")) {
+        detenerCamara();
+        enviarDatosReciclaje(lectura);
+    } 
+    // Si lee un PACK (Empieza con P)
+    else if (lectura.startsWith("P")) {
+        detenerCamara();
+        // Preguntamos al usuario si quiere activar el pack
+        if(confirm("Has escaneado un Pack de bolsas. ¿Quieres activarlo ahora?")) {
+            enviarActivacionPack(lectura);
+        } else {
+            resetUI();
+            mostrarSeccion('sec-perfil');
         }
-
+    } 
+    // Si no es ninguno de los dos
+    else {
+        alert("QR no reconocido. Asegúrate de escanear un Contenedor o un Pack REURU.");
+    }
+});
 
         // ////////////////////////////////////////////////////////////
         // //  CÁMARA PARA PACKS                                     //
