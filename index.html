@@ -367,36 +367,61 @@ if (datos.bolsas > 0) {
 
 
 function enviarDatosReciclaje(idContenedor) {
-            document.getElementById("loader").style.display = "block";
-            document.getElementById("status").innerText = "Validando GPS...";
 
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const userIdActual = localStorage.getItem("reuru_user_id");
-                const url = `${scriptURL}?action=reciclar_bolsa`
-                    + `&user=${userIdActual}`
-                    + `&contenedor=${idContenedor}`
-                    + `&bolsa_id=${bolsaIdActiva}`
-                    + `&lat=${pos.coords.latitude}`
-                    + `&lon=${pos.coords.longitude}`;
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("status").innerText = "Validando GPS...";
 
-                fetch(url)
-                .then(r => r.text())
-                .then(res => {
-                    alert("RESPUESTA:\n" + res);
-                    resetUI();
-                    // Después de reciclar, refrescamos los datos para ver si bajó el contador de bolsas
-                    if(userIdActual) cargarDatosUsuario(userIdActual);
-                })
-                .catch(err => {
-                    alert("ERROR DE CONEXIÓN: " + err.message);
-                    resetUI();
-                });
-            }, (err) => { 
-                alert("Error: Para reciclar es necesario activar el GPS"); 
-                resetUI(); 
+    navigator.geolocation.getCurrentPosition(
+
+        (pos) => {
+
+            const userIdActual = localStorage.getItem("reuru_user_id");
+
+            const url = `${scriptURL}?action=reciclar_bolsa`
+                + `&user=${userIdActual}`
+                + `&contenedor=${idContenedor}`
+                + `&bolsa_id=${bolsaIdActiva}`
+                + `&lat=${pos.coords.latitude}`
+                + `&lon=${pos.coords.longitude}`;
+
+            fetch(url)
+
+            .then(r => r.text())
+
+            .then(res => {
+
+                alert("RESPUESTA:\n" + res);
+
+                resetUI();
+
+                // Refrescamos perfil
+                if (userIdActual) {
+                    cargarDatosUsuario(userIdActual);
+                }
+
+            })
+
+            .catch(err => {
+
+                alert("ERROR DE CONEXIÓN: " + err.message);
+
+                resetUI();
+
             });
+
+        },
+
+        (err) => {
+
+            alert("Error: Para reciclar es necesario activar el GPS");
+
+            resetUI();
+
         }
-        // ////////////////////////////////////////////////////////////
+
+    );
+
+}        // ////////////////////////////////////////////////////////////
         // //  ACTIVAR PACK DE BOLSAS                                //
         // //  Manda el ID del pack al script y suma bolsas          //
         // ////////////////////////////////////////////////////////////
