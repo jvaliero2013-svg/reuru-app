@@ -383,9 +383,12 @@ function procesarQR(lectura, modo) {
         }
 
     } else if (modo === "PACK") {
-        if (lectura.startsWith("P")) {
-            enviarActivacionPack(lectura);
-        } else if (lectura.startsWith("C")) {
+    if (lectura.startsWith("PR")) {
+        // // Pack regalo → solo ADMIN puede activarlo //
+        alert("Este QR es un pack regalo. Llevalo a un centro de canje REURU.");
+    } else if (lectura.startsWith("P")) {
+        enviarActivacionPack(lectura);
+    } else if (lectura.startsWith("C")) {
             if (confirm("Ese es un QR de contenedor. Deseas reciclar?")) {
                 enviarDatosReciclaje(lectura);
             }
