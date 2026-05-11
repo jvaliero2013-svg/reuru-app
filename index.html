@@ -359,51 +359,55 @@
         }
 
 
-        // ============================================================
-        // //  PROCESAR QR SEGUN MODO Y PREFIJO                     //
-        // //  C = Contenedor Municipal                             //
-        // //  R = Contenedor REURU                                 //
-        // //  P = Pack de bolsas                                   //
-        // //  U = Usuario (para ADMIN)                             //
-        // ============================================================
-        function procesarQR(lectura, modo) {
-            if (modo === "USUARIO") {
-                if (lectura.startsWith("C")) {
-                    enviarDatosReciclaje(lectura);
-                } else if (lectura.startsWith("R")) {
-                    enviarDatosReciclajeReuru(lectura);
-                } else if (lectura.startsWith("P")) {
-                    if (confirm("Ese es un QR de Pack. Deseas activarlo?")) {
-                        enviarActivacionPack(lectura);
-                    }
-                } else {
-                    alert("QR no reconocido");
-                }
-       } else if (modo === "PACK") {
-    if (lectura.startsWith("P")) {
-        enviarActivacionPack(lectura);
-    } else if (lectura.startsWith("C")) {
-        if (confirm("Ese es un QR de contenedor. Deseas reciclar?")) {
+// ============================================================
+// //  PROCESAR QR SEGUN MODO Y PREFIJO                     //
+// //  C  = Contenedor Municipal                            //
+// //  CR = Contenedor REURU                                //
+// //  P  = Pack comun                                      //
+// //  PR = Pack regalo (requiere 200 puntos)               //
+// //  U  = Usuario (para ADMIN)                            //
+// ============================================================
+function procesarQR(lectura, modo) {
+
+    if (modo === "USUARIO") {
+        if (lectura.startsWith("CR")) {
+            enviarDatosReciclajeReuru(lectura);
+        } else if (lectura.startsWith("C")) {
             enviarDatosReciclaje(lectura);
-        }
-    } else {
-        alert("QR no reconocido. Intenta de nuevo.");
-    }
-} else if (modo === "ADMIN") {
-                if (lectura.startsWith("U")) {
-                    alert("Usuario escaneado: " + lectura + "\nFuncion proximamente");
-                } else {
-                    alert("Escanea el QR del usuario, no del contenedor");
-                }
-            } else if (modo === "RECOLECTOR") {
-                if (lectura.startsWith("C") || lectura.startsWith("R")) {
-                    alert("Contenedor: " + lectura + "\nFuncion proximamente");
-                } else {
-                    alert("QR de contenedor no reconocido");
-                }
+        } else if (lectura.startsWith("P")) {
+            if (confirm("Ese es un QR de Pack. Deseas activarlo?")) {
+                enviarActivacionPack(lectura);
             }
+        } else {
+            alert("QR no reconocido");
         }
 
+    } else if (modo === "PACK") {
+        if (lectura.startsWith("P")) {
+            enviarActivacionPack(lectura);
+        } else if (lectura.startsWith("C")) {
+            if (confirm("Ese es un QR de contenedor. Deseas reciclar?")) {
+                enviarDatosReciclaje(lectura);
+            }
+        } else {
+            alert("QR no reconocido. Intenta de nuevo.");
+        }
+
+    } else if (modo === "ADMIN") {
+        if (lectura.startsWith("U")) {
+            alert("Usuario escaneado: " + lectura + "\nFuncion proximamente");
+        } else {
+            alert("Escanea el QR del usuario, no del contenedor");
+        }
+
+    } else if (modo === "RECOLECTOR") {
+        if (lectura.startsWith("C") || lectura.startsWith("CR")) {
+            alert("Contenedor: " + lectura + "\nFuncion proximamente");
+        } else {
+            alert("QR de contenedor no reconocido");
+        }
+    }
+}
 
         // ============================================================
         // //  RECICLAR EN CONTENEDOR MUNICIPAL                     //
