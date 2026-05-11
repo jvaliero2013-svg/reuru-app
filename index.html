@@ -379,20 +379,17 @@
                 } else {
                     alert("QR no reconocido");
                 }
-         } else if (modo === "PACK") {
+       } else if (modo === "PACK") {
     if (lectura.startsWith("P")) {
-        // // PR = pack regalo, P = pack comun, ambos van a la misma funcion //
         enviarActivacionPack(lectura);
     } else if (lectura.startsWith("C")) {
-        // // Si escaneo un contenedor por error, lo mandamos a reciclar //
         if (confirm("Ese es un QR de contenedor. Deseas reciclar?")) {
             enviarDatosReciclaje(lectura);
         }
     } else {
         alert("QR no reconocido. Intenta de nuevo.");
     }
-}
-            } else if (modo === "ADMIN") {
+} else if (modo === "ADMIN") {
                 if (lectura.startsWith("U")) {
                     alert("Usuario escaneado: " + lectura + "\nFuncion proximamente");
                 } else {
