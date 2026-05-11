@@ -52,6 +52,11 @@
                 data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <li class="nav-item">
+    <a class="nav-link" href="#" onclick="mostrarSeccion('sec-que-es')">
+        <i class="bi bi-info-circle me-2"></i> ¿Qué es REURU?
+    </a>
+</li>
         </div>
     </nav>
 
@@ -213,6 +218,59 @@
             <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
         </div>
 
+        <div id="sec-que-es" class="section">
+    <div class="text-center py-5" style="background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%); border-radius: 0 0 50px 50px;">
+        <h1 class="display-5 fw-bold" style="color: #2d5a27;">Recicla. Gana.<br>Ayuda al planeta.</h1>
+        <p class="text-muted px-4">REURU convierte tu reciclaje en una experiencia moderna y recompensada.</p>
+        <div class="mt-4">
+            <button class="btn btn-success rounded-pill px-4 py-2 fw-bold" onclick="mostrarSeccion('sec-login')">Comenzar</button>
+            <button class="btn btn-outline-success rounded-pill px-4 py-2 ms-2 fw-bold" onclick="document.getElementById('como-funciona-info').scrollIntoView()">Cómo funciona</button>
+        </div>
+        <div class="mt-5 px-3">
+             <img src="https://via.placeholder.com/600x400/e8f5e9/2d5a27?text=Contenedor+Inteligente" class="img-fluid rounded-4 shadow-sm" alt="Smart Bin">
+        </div>
+    </div>
+
+    <div class="container py-5" id="como-funciona-info">
+        <h3 class="fw-bold mb-4">¿Cómo funciona?</h3>
+        
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="d-flex align-items-start p-3 bg-white rounded-4 shadow-sm">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; flex-shrink: 0;">1</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Escanea</h6>
+                        <p class="small text-muted mb-0">Usa la app para abrir el contenedor inteligente REURU.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-start p-3 bg-white rounded-4 shadow-sm">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; flex-shrink: 0;">2</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Recicla</h6>
+                        <p class="small text-muted mb-0">Deposita tus bolsas blancas (sin necesidad de códigos).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex align-items-start p-3 bg-white rounded-4 shadow-sm">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; flex-shrink: 0;">3</div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Gana</h6>
+                        <p class="small text-muted mb-0">Suma puntos y canjealos por beneficios exclusivos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 p-4 bg-light rounded-5 text-center">
+            <h5 class="fw-bold">Una App, un impacto real.</h5>
+            <p class="small text-muted">Diseñado en Uruguay para un futuro más limpio e inteligente.</p>
+            <button class="btn btn-link text-success fw-bold text-decoration-none" onclick="mostrarSeccion('sec-login')">Volver al inicio</button>
+        </div>
+    </div>
+</div>
         <div id="loader" class="loader"></div>
         <div id="status" style="margin-top:10px; font-weight:bold; color:#555; text-align:center;"></div>
     </div>
