@@ -208,6 +208,40 @@
         </div>
 
         <!-- ======================================================== -->
+<!-- //  SECCION: CANJE DE PACK REGALO                      // -->
+<!-- //  Solo visible cuando el usuario tiene 200 puntos    // -->
+<!-- ======================================================== -->
+<div id="sec-canje" class="section">
+    <h4 class="text-center fw-bold text-success">Canjear Pack Regalo</h4>
+
+    <!-- // INFO // -->
+    <p class="text-muted text-center" style="font-size:13px;">
+        Presentate en un centro de canje REURU con este QR
+    </p>
+
+    <!-- // CENTROS DE CANJE (link externo) // -->
+    <a href="https://maps.google.com" target="_blank"
+        class="btn-main text-center text-decoration-none"
+        style="display:block; background:#17a2b8; padding:12px; border-radius:50px; color:white; margin-top:10px;">
+        Ver centros de canje cercanos
+    </a>
+
+    <!-- // BOTON GENERAR QR // -->
+    <button class="btn-main mt-3" onclick="solicitarCanje()">
+        GENERAR MI QR DE CANJE
+    </button>
+
+    <!-- // QR GENERADO // -->
+    <div id="div-qr-canje" style="display:none; margin-top:20px; text-align:center;">
+        <p style="font-size:13px; color:#555;">Mostrale este QR al ADMIN del centro</p>
+        <img id="img-qr-canje" src="" alt="QR de canje"
+            style="width:200px; height:200px; border:3px solid #28a745; border-radius:15px;">
+        <p id="txt-pack-id" style="font-weight:bold; color:#28a745; margin-top:10px; font-size:18px;"></p>
+    </div>
+
+    <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver al perfil</button>
+</div>
+        <!-- ======================================================== -->
         <!-- //  SECCION: ADMIN                                     // -->
         <!-- ======================================================== -->
         <div id="sec-admin" class="section">
@@ -311,7 +345,7 @@
         // ============================================================
         // //  CONFIGURACION GLOBAL                                  //
         // ============================================================
-        var scriptURL = "https://script.google.com/macros/s/AKfycbzrlOLbO1x1MExdjcYPIwNh2-DGCflDpBEml5SsnqPz9MDNfOwhzIwR9OU95-OxXSe4/exec";
+        var scriptURL = "https://script.google.com/macros/s/AKfycbyd_dN9XnXCsntXOx5tjoZt3uqVnIzgnqDCqa69rFw67s0vP7ZN1QwcOvZKm5xtJ4cD/exec";
         var bolsaIdActiva = "";
         var html5QrCode = null;
         var modoEscaner = "";
@@ -378,11 +412,12 @@
                     var PUNTOS_PACK = 200;
                     var puntosActuales = Number(datos.puntos) || 0;
                     var msgPack = document.getElementById("msg-pack");
-                    if (puntosActuales >= PUNTOS_PACK) {
-                        msgPack.innerHTML = "<strong style='color:#28a745;'>YA PODES CANJEAR UN PACK REURU!</strong>";
-                    } else {
-                        msgPack.innerHTML = "Te faltan <strong>" + (PUNTOS_PACK - puntosActuales) + " puntos</strong> para canjear un pack";
-                    }
+          if (puntosActuales >= PUNTOS_PACK) {
+    // // Link que lleva a la pantalla de canje //
+    msgPack.innerHTML = "<a href='#' onclick=\"mostrarSeccion('sec-canje')\" style='color:#28a745; font-weight:bold;'>YA PODES CANJEAR UN PACK REURU! →</a>";
+} else {
+    msgPack.innerHTML = "Te faltan <strong>" + (PUNTOS_PACK - puntosActuales) + " puntos</strong> para canjear un pack";
+}
 
                     // // Boton reciclar segun bolsas disponibles //
                     var btnEscanear = document.getElementById("btn-escanear");
@@ -773,6 +808,40 @@ function procesarQR(lectura, modo) {
             document.getElementById("sec-escanner").style.display = "none";
         }
 
+
+        // ============================================================
+// //  FUNCIÓN: SOLICITAR CANJE DE PACK REGALO              //
+// //  Llama al script, obtiene el ID del pack asignado     //
+// //  y genera el QR usando la API de Google Charts        //
+// ============================================================
+function solicitarCanje() {
+    var userIdActual = localStorage.getItem("reuru_user_id");
+    document.getElementById("loader").style.display = "block";
+
+    fetch(scriptURL + "?action=solicitar_canje&user=" + userIdActual)
+    .then(function(r) { return r.text(); })
+    .then(function(data) {
+        document.getElementById("loader").style.display = "none";
+
+        if (data.startsWith("OK:")) {
+            var idPack = data.split(":")[1].trim();
+
+            // // Generamos QR con la API de Google Charts //
+            var urlQR = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=" + idPack + "&choe=UTF-8";
+
+            document.getElementById("img-qr-canje").src = urlQR;
+            document.getElementById("txt-pack-id").innerText = "Pack: " + idPack;
+            document.getElementById("div-qr-canje").style.display = "block";
+
+        } else {
+            alert(data);
+        }
+    })
+    .catch(function(err) {
+        document.getElementById("loader").style.display = "none";
+        alert("Error de conexion: " + err.message);
+    });
+}
     </script>
 </body>
 </html>
