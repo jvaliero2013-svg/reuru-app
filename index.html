@@ -311,7 +311,7 @@
         // ============================================================
         // //  CONFIGURACION GLOBAL                                  //
         // ============================================================
-        var scriptURL = "https://script.google.com/macros/s/AKfycbzbzOWoZbap6GwzXP2Um_wNpWg6lj-U9n07oG_GPvVLiDoyjqeiPO9nHoWa3PN052wV/exec";
+        https://script.google.com/macros/s/AKfycbyezSONyt3LG17Bwc_f_8d2Vo_MN_oD652FweM13UxnLKzIPZ6NaNiHMj-aXB13Jiiy/exec
         var bolsaIdActiva = "";
         var html5QrCode = null;
         var modoEscaner = "";
@@ -801,8 +801,7 @@ function solicitarCanje() {
             var idPack = data.split(":")[1].trim();
 
             // // Generamos QR con la API de Google Charts //
-            var urlQR = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=" + idPack + "&choe=UTF-8";
-
+var urlQR = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + idPack;
             document.getElementById("img-qr-canje").src = urlQR;
             document.getElementById("txt-pack-id").innerText = "Pack: " + idPack;
             document.getElementById("div-qr-canje").style.display = "block";
