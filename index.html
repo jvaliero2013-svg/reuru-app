@@ -493,13 +493,15 @@ function procesarQR(lectura, modo) {
         } else {
             alert("QR no reconocido. Intenta de nuevo.");
         }
-
-    } else if (modo === "ADMIN") {
-        if (lectura.startsWith("U")) {
-            alert("Usuario escaneado: " + lectura + "\nFuncion proximamente");
-        } else {
-            alert("Escanea el QR del usuario, no del contenedor");
-        }
+        
+} else if (modo === "ADMIN") {
+    if (lectura.startsWith("PR")) {
+        // // Pack regalo → validar canje //
+        validarCanjeAdmin(lectura);
+    } else {
+        alert("Ese QR no es un pack regalo. Debe empezar con PR.");
+    }
+}
 
     } else if (modo === "RECOLECTOR") {
         if (lectura.startsWith("C") || lectura.startsWith("CR")) {
@@ -809,6 +811,33 @@ var urlQR = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + i
         } else {
             alert(data);
         }
+    })
+    .catch(function(err) {
+        document.getElementById("loader").style.display = "none";
+        alert("Error de conexion: " + err.message);
+    });
+}
+        // ============================================================
+// //  FUNCIÓN: VALIDAR CANJE (lado ADMIN)                  //
+// //  El ADMIN escanea el QR PR del usuario                //
+// //  El script valida, crea bolsas regalo y registra      //
+// ============================================================
+function validarCanjeAdmin(idPack) {
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("status").innerText = "Validando canje...";
+
+    var adminId = localStorage.getItem("reuru_user_id");
+    var url = scriptURL
+        + "?action=validar_canje"
+        + "&admin=" + adminId
+        + "&id_pack=" + idPack;
+
+    fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(res) {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("status").innerText = "";
+        alert(res);
     })
     .catch(function(err) {
         document.getElementById("loader").style.display = "none";
