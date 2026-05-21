@@ -320,7 +320,7 @@
         // ============================================================
         // //  CONFIGURACION GLOBAL                                  //
         // ============================================================
-                var scriptURL = "https://script.google.com/macros/s/AKfycbyKIwdqLE8GYaQqvs7siDO_SebE-UmbTqJ1g0zrS7HFVeNSCb-xNSMXuJ5zYEh19A/exec";
+                var scriptURL = "https://script.google.com/macros/s/AKfycbzgADpm0hLjDAWwk9WgGzm48UrP8MmM_NHAhInU8XKFTY9BhtGe9ShuAeBy3ILcbxk/exec";
         var bolsaIdActiva = "";
         var html5QrCode = null;
         var modoEscaner = "";
@@ -879,12 +879,20 @@ function cargarUltimosCanjes() {
         if (canjes.length === 0) {
             html = "<p>No hay canjes registrados aún.</p>";
         } else {
-            for (var i = 0; i < canjes.length; i++) {
-                html += "<div style='background:#f8f9fa; border-radius:10px; padding:10px; margin:5px 0;'>";
-                html += "<strong>" + canjes[i].pack + "</strong>";
-                html += " · " + canjes[i].fecha;
-                html += "</div>";
-            }
+         for (var i = 0; i < canjes.length; i++) {
+    // // Formatear fecha a dd/mm/aa //
+    var fechaRaw = new Date(canjes[i].fecha);
+    var dia  = String(fechaRaw.getDate()).padStart(2, '0');
+    var mes  = String(fechaRaw.getMonth() + 1).padStart(2, '0');
+    var anio = String(fechaRaw.getFullYear()).slice(-2);
+    var fechaFormateada = dia + "/" + mes + "/" + anio;
+
+    html += "<div style='background:#f8f9fa; border-radius:10px; padding:10px; margin:5px 0;'>";
+    html += "<strong>Pack: " + canjes[i].pack + "</strong><br>";
+    html += "Usuario: " + canjes[i].usuario + "<br>";
+    html += "Fecha: " + fechaFormateada;
+    html += "</div>";
+}
         }
         document.getElementById("lista-canjes").innerHTML = html;
     })
