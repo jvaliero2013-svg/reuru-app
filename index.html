@@ -237,12 +237,28 @@
         <!-- ======================================================== -->
         <!-- //  SECCION: RECOLECTOR                                // -->
         <!-- ======================================================== -->
-        <div id="sec-recolector" class="section">
-            <h4 class="text-center fw-bold text-info">Panel Recolector</h4>
-            <p class="text-muted text-center" style="font-size:13px;">Escanea el contenedor para abrirlo y vaciarlo</p>
-            <button class="btn-main" style="background:#17a2b8;" onclick="encenderCamara('RECOLECTOR')">ABRIR CONTENEDOR</button>
-            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+   <div id="sec-recolector" class="section">
+    <h4 class="text-center fw-bold text-info">Panel Recolector</h4>
+    <p class="text-muted text-center" style="font-size:13px;">
+        Escanea el contenedor para abrir la puerta
+    </p>
+
+    <!-- // BOTON ESCANEAR // -->
+    <button class="btn-main" style="background:#17a2b8;"
+        onclick="encenderCamara('RECOLECTOR')">
+        ESCANEAR CONTENEDOR
+    </button>
+
+    <!-- // RUTA DEL DIA // -->
+    <div style="margin-top:20px;">
+        <h6 class="fw-bold text-muted">Ruta del día:</h6>
+        <div id="lista-ruta" style="font-size:13px;">
+            Cargando...
         </div>
+    </div>
+
+    <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+</div>
 
         <!-- ======================================================== -->
         <!-- //  SECCION: ALIADO                                    // -->
@@ -328,7 +344,7 @@
         // ============================================================
         // //  CONFIGURACION GLOBAL                                  //
         // ============================================================
-                var scriptURL = "https://script.google.com/macros/s/AKfycbzrygGrRuRkGlIU10rMmQ9tHahCE0qT4lhC4VT7zROdBOTGRmPGSe4cyi9Z9ZklpYpF/exec";
+                var scriptURL = "https://script.google.com/macros/s/AKfycbxJ7D9yR-e7pXQwTI8AbLv9v6_Nwickz6wj4QLTvTriitFcbr-hl6peLzu5AEF6kqAl/exec";
         var bolsaIdActiva = "";
         var html5QrCode = null;
         var modoEscaner = "";
@@ -363,11 +379,14 @@
     document.getElementById("status").innerText = "";
 
     // // Si va al panel admin, carga los últimos canjes //
- if (id === 'sec-admin') {
+if (id === 'sec-admin') {
     cargarUltimosCanjes();
 }
 if (id === 'sec-canje') {
     cargarUltimosCanjesUsuario();
+}
+if (id === 'sec-recolector') {
+    cargarRutaRecolector();
 }
 }
 
@@ -934,6 +953,49 @@ function cargarUltimosCanjesUsuario() {
     })
     .catch(function(err) {
         document.getElementById("lista-canjes-usuario").innerHTML = "Error cargando canjes";
+    });
+}
+        // ============================================================
+// //  FUNCIÓN: CARGAR RUTA DEL RECOLECTOR                 //
+// //  Muestra los 5 contenedores más llenos               //
+// //  con barra de progreso visual                        //
+// ============================================================
+function cargarRutaRecolector() {
+    document.getElementById("lista-ruta").innerHTML = "Cargando...";
+
+    fetch(scriptURL + "?action=ruta_recolector")
+    .then(function(r) { return r.json(); })
+    .then(function(contenedores) {
+        var html = "";
+        if (contenedores.length === 0) {
+            html = "<p>No hay contenedores registrados.</p>";
+        } else {
+            for (var i = 0; i < contenedores.length; i++) {
+                var c     = contenedores[i];
+                var nivel = Number(c.nivel) || 0;
+
+                // // Color de la barra segun nivel //
+                var color = "#28a745";
+                if (nivel >= 80) color = "#dc3545";
+                else if (nivel >= 50) color = "#ffc107";
+
+                html += "<div style='background:#f8f9fa; border-radius:10px; padding:12px; margin:8px 0;'>";
+                html += "<strong>" + c.id + "</strong> · " + c.barrio + "<br>";
+                html += "<small>" + c.direccion + "</small><br>";
+
+                // // Barra de progreso // 
+                html += "<div style='background:#ddd; border-radius:5px; height:10px; margin-top:6px;'>";
+                html += "<div style='background:" + color + "; width:" + nivel + "%; height:10px; border-radius:5px;'></div>";
+                html += "</div>";
+                html += "<small style='color:" + color + ";'>" + nivel + "% lleno</small>";
+                html += " · <small>🔋 " + (c.bateria || "-") + "%</small>";
+                html += "</div>";
+            }
+        }
+        document.getElementById("lista-ruta").innerHTML = html;
+    })
+    .catch(function(err) {
+        document.getElementById("lista-ruta").innerHTML = "Error cargando ruta";
     });
 }
     </script>
