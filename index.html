@@ -573,13 +573,13 @@ function procesarQR(lectura, modo) {
     }
 
 
-    } else if (modo === "RECOLECTOR") {
-        if (lectura.startsWith("C") || lectura.startsWith("CR")) {
-            alert("Contenedor: " + lectura + "\nFuncion proximamente");
-        } else {
-            alert("QR de contenedor no reconocido");
-        }
+} else if (modo === "RECOLECTOR") {
+    if (lectura.startsWith("CR") || lectura.startsWith("C")) {
+        abrirContenedorRecolector(lectura);
+    } else {
+        alert("QR no reconocido. Debe ser un contenedor REURU.");
     }
+}
 }
 
         // ============================================================
@@ -1022,6 +1022,35 @@ function cargarRutaRecolector() {
     })
     .catch(function(err) {
         document.getElementById("lista-ruta").innerHTML = "Error cargando ruta";
+    });
+}
+        // ============================================================
+// //  FUNCIÓN: ABRIR CONTENEDOR (RECOLECTOR)              //
+// //  Llama al script para escribir "abrir"               //
+// //  en COMANDO_PUERTA del contenedor escaneado          //
+// ============================================================
+function abrirContenedorRecolector(idContenedor) {
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("status").innerText = "Abriendo contenedor...";
+
+    var userIdActual = localStorage.getItem("reuru_user_id");
+    var url = scriptURL
+        + "?action=abrir_contenedor"
+        + "&user=" + userIdActual
+        + "&contenedor=" + idContenedor;
+
+    fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(res) {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("status").innerText = "";
+        alert(res);
+        // // Recargamos la ruta para ver el estado actualizado //
+        cargarRutaRecolector();
+    })
+    .catch(function(err) {
+        document.getElementById("loader").style.display = "none";
+        alert("Error de conexion: " + err.message);
     });
 }
     </script>
