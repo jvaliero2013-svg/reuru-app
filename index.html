@@ -204,6 +204,14 @@
             style="width:200px; height:200px; border:3px solid #28a745; border-radius:15px;">
         <p id="txt-pack-id" style="font-weight:bold; color:#28a745; margin-top:10px; font-size:18px;"></p>
     </div>
+<!-- // ULTIMOS 3 CANJES DEL USUARIO // -->
+<div style="margin-top:20px;">
+    <h6 class="fw-bold text-muted">Mis últimos canjes:</h6>
+    <div id="lista-canjes-usuario" style="font-size:13px; color:#555;">
+        Cargando...
+    </div>
+</div>
+
 <button class="btn-volver" onclick="volverAlPerfil()">- Volver al perfil</button>
 </div>
         
@@ -320,7 +328,7 @@
         // ============================================================
         // //  CONFIGURACION GLOBAL                                  //
         // ============================================================
-                var scriptURL = "https://script.google.com/macros/s/AKfycbzwAGSY4VAn77A4pjPgKxKiI-E7WvrlQVbyK7YiKovnwwkNRN9xmxCrLzyDDbtYCBPl/exec";
+                var scriptURL = "https://script.google.com/macros/s/AKfycbzrygGrRuRkGlIU10rMmQ9tHahCE0qT4lhC4VT7zROdBOTGRmPGSe4cyi9Z9ZklpYpF/exec";
         var bolsaIdActiva = "";
         var html5QrCode = null;
         var modoEscaner = "";
@@ -355,9 +363,12 @@
     document.getElementById("status").innerText = "";
 
     // // Si va al panel admin, carga los últimos canjes //
-    if (id === 'sec-admin') {
-        cargarUltimosCanjes();
-    }
+ if (id === 'sec-admin') {
+    cargarUltimosCanjes();
+}
+if (id === 'sec-canje') {
+    cargarUltimosCanjesUsuario();
+}
 }
 
         // ============================================================
@@ -893,6 +904,36 @@ html += "</div>";
     })
     .catch(function(err) {
         document.getElementById("lista-canjes").innerHTML = "Error cargando canjes";
+    });
+}
+        // ============================================================
+// //  FUNCIÓN: CARGAR ULTIMOS CANJES DEL USUARIO           //
+// //  Muestra los últimos 3 canjes del usuario logueado    //
+// //  con el nombre del centro que lo validó               //
+// ============================================================
+function cargarUltimosCanjesUsuario() {
+    var userId = localStorage.getItem("reuru_user_id");
+    document.getElementById("lista-canjes-usuario").innerHTML = "Cargando...";
+
+    fetch(scriptURL + "?action=ultimos_canjes_usuario&user=" + userId)
+    .then(function(r) { return r.json(); })
+    .then(function(canjes) {
+        var html = "";
+        if (canjes.length === 0) {
+            html = "<p>No tenés canjes registrados aún.</p>";
+        } else {
+            for (var i = 0; i < canjes.length; i++) {
+                html += "<div style='background:#f8f9fa; border-radius:10px; padding:10px; margin:5px 0;'>";
+                html += "<strong>Pack: " + canjes[i].pack + "</strong><br>";
+                html += "Centro: " + canjes[i].centro + "<br>";
+                html += "Fecha: " + canjes[i].fecha;
+                html += "</div>";
+            }
+        }
+        document.getElementById("lista-canjes-usuario").innerHTML = html;
+    })
+    .catch(function(err) {
+        document.getElementById("lista-canjes-usuario").innerHTML = "Error cargando canjes";
     });
 }
     </script>
