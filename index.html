@@ -75,17 +75,43 @@
                 <i class="bi bi-person-circle me-3"></i> Mi Perfil
             </a>
 
-            <div id="item-admin" style="display:none;">
-                <a href="#" class="list-group-item list-group-item-action py-3 bg-light" 
-                   onclick="mostrarSeccion('sec-admin')" data-bs-dismiss="offcanvas">
-                    <i class="bi bi-shield-lock me-3 text-danger"></i> Panel Administrador
-                </a>
-            </div>
+            <!-- // VALIDADOR // -->
+<div id="item-admin" style="display:none;">
+    <a href="#" class="list-group-item list-group-item-action py-3 bg-light" 
+       onclick="mostrarSeccion('sec-admin')" data-bs-dismiss="offcanvas">
+        <i class="bi bi-shield-lock me-3 text-danger"></i> Panel Validador
+    </a>
+</div>
 
-            <a href="#" class="list-group-item list-group-item-action py-3 text-muted" 
-               onclick="cerrarSesion()">
-                <i class="bi bi-box-arrow-right me-3"></i> Cerrar Sesión
-            </a>
+<!-- // RECOLECTOR // -->
+<div id="item-recolector" style="display:none;">
+    <a href="#" class="list-group-item list-group-item-action py-3" 
+       onclick="mostrarSeccion('sec-recolector')" data-bs-dismiss="offcanvas">
+        <i class="bi bi-truck me-3 text-info"></i> Ruta de Recolección
+    </a>
+</div>
+
+<!-- // ALIADO // -->
+<div id="item-aliado" style="display:none;">
+    <a href="#" class="list-group-item list-group-item-action py-3" 
+       onclick="mostrarSeccion('sec-aliado')" data-bs-dismiss="offcanvas">
+        <i class="bi bi-shop me-3 text-primary"></i> Dashboard Aliado
+    </a>
+</div>
+
+<!-- // IMM // -->
+<div id="item-imm" style="display:none;">
+    <a href="#" class="list-group-item list-group-item-action py-3" 
+       onclick="mostrarSeccion('sec-imm')" data-bs-dismiss="offcanvas">
+        <i class="bi bi-building me-3 text-secondary"></i> Panel IMM
+    </a>
+</div>
+
+<!-- // CERRAR SESION // -->
+<a href="#" class="list-group-item list-group-item-action py-3 text-muted" 
+   onclick="cerrarSesion()">
+    <i class="bi bi-box-arrow-right me-3"></i> Cerrar Sesión
+</a>
         </div>
     </div>
 </div>
