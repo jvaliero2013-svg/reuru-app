@@ -210,12 +210,21 @@
         <!-- ======================================================== -->
         <!-- //  SECCION: ADMIN                                     // -->
         <!-- ======================================================== -->
-        <div id="sec-admin" class="section">
-            <h4 class="text-center fw-bold text-warning">Panel Admin</h4>
-            <p class="text-muted text-center" style="font-size:13px;">Escanea el QR del usuario para entregar un pack</p>
-            <button class="btn-main" style="background:#ffc107; color:#333;" onclick="encenderCamara('ADMIN')">ESCANEAR USUARIO</button>
-            <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+<div id="sec-admin" class="section">
+    <h4 class="text-center fw-bold text-warning">Panel Admin</h4>
+    <p class="text-muted text-center" style="font-size:13px;">Escanea el QR del usuario para entregar un pack</p>
+    <button class="btn-main" style="background:#ffc107; color:#333;" onclick="encenderCamara('ADMIN')">ESCANEAR QR REGALO</button>
+
+    <!-- // ULTIMOS 3 CANJES // -->
+    <div style="margin-top:20px;">
+        <h6 class="fw-bold text-muted">Últimos canjes:</h6>
+        <div id="lista-canjes" style="font-size:13px; color:#555;">
+            Cargando...
         </div>
+    </div>
+
+    <button class="btn-volver" onclick="mostrarSeccion('sec-perfil')">- Volver</button>
+</div>
 
         <!-- ======================================================== -->
         <!-- //  SECCION: RECOLECTOR                                // -->
@@ -336,16 +345,20 @@
         // ============================================================
         // //  NAVEGACION ENTRE SECCIONES                           //
         // ============================================================
-        function mostrarSeccion(id) {
-            var secciones = document.querySelectorAll('.section');
-            for (var i = 0; i < secciones.length; i++) {
-                secciones[i].classList.remove('active');
-            }
-            var sec = document.getElementById(id);
-            if (sec) sec.classList.add('active');
-            document.getElementById("status").innerText = "";
-        }
+  function mostrarSeccion(id) {
+    var secciones = document.querySelectorAll('.section');
+    for (var i = 0; i < secciones.length; i++) {
+        secciones[i].classList.remove('active');
+    }
+    var sec = document.getElementById(id);
+    if (sec) sec.classList.add('active');
+    document.getElementById("status").innerText = "";
 
+    // // Si va al panel admin, carga los últimos canjes //
+    if (id === 'sec-admin') {
+        cargarUltimosCanjes();
+    }
+}
 
         // ============================================================
         // //  CARGAR DATOS DEL USUARIO                             //
@@ -844,10 +857,40 @@ function validarCanjeAdmin(idPack) {
         alert("Error de conexion: " + err.message);
     });
 }
-        function volverAlPerfil() {
-    mostrarSeccion('sec-perfil');
+function volverAlPerfil() {
     var id = localStorage.getItem("reuru_user_id");
+    mostrarSeccion('sec-perfil');
     if (id) cargarDatosUsuario(id);
+    // // Ocultamos el QR generado para que no se reutilice //
+    document.getElementById("div-qr-canje").style.display = "none";
+    document.getElementById("txt-pack-id").innerText = "";
+}
+
+        // ============================================================
+// //  FUNCIÓN: CARGAR ULTIMOS 3 CANJES EN PANEL ADMIN     //
+// ============================================================
+function cargarUltimosCanjes() {
+    document.getElementById("lista-canjes").innerHTML = "Cargando...";
+
+    fetch(scriptURL + "?action=ultimos_canjes")
+    .then(function(r) { return r.json(); })
+    .then(function(canjes) {
+        var html = "";
+        if (canjes.length === 0) {
+            html = "<p>No hay canjes registrados aún.</p>";
+        } else {
+            for (var i = 0; i < canjes.length; i++) {
+                html += "<div style='background:#f8f9fa; border-radius:10px; padding:10px; margin:5px 0;'>";
+                html += "<strong>" + canjes[i].pack + "</strong>";
+                html += " · " + canjes[i].fecha;
+                html += "</div>";
+            }
+        }
+        document.getElementById("lista-canjes").innerHTML = html;
+    })
+    .catch(function(err) {
+        document.getElementById("lista-canjes").innerHTML = "Error cargando canjes";
+    });
 }
     </script>
 </body>
